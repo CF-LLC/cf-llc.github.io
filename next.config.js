@@ -5,8 +5,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/cooperfeatherstonellc',
-  assetPrefix: '/cooperfeatherstonellc/',
+  basePath: '/cooperfeatherstonellc.github.io',
+  assetPrefix: '/cooperfeatherstonellc.github.io/',
 }
 
 module.exports = nextConfig
