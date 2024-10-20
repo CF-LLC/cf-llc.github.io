@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import ProjectShowcase from '../components/ProjectShowcase'
-import ProjectSetupGuide from '../components/ProjectSetupGuide'
+import ProjectsSection from '../components/ProjectsSection'
 import ContactInfo from '../components/ContactInfo'
 import LoadingAnimation from '../components/LoadingAnimation'
 
@@ -19,15 +18,14 @@ export default function Home() {
       {loading ? (
         <LoadingAnimation />
       ) : (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
           <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-indigo-800 mb-2">Cooper Featherstone LLC</h1>
-            <p className="text-xl text-purple-600">Innovative Solutions, Exceptional Results</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-indigo-800 mb-2">Cooper Featherstone LLC</h1>
+            <p className="text-xl md:text-2xl text-purple-600">Innovative Solutions, Exceptional Results</p>
           </header>
 
           <main className="space-y-16">
-            <ProjectShowcase />
-            <ProjectSetupGuide />
+            <ProjectsSection />
             <ContactInfo />
           </main>
 

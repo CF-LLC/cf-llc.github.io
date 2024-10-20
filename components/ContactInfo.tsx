@@ -1,10 +1,11 @@
-import { Github, Linkedin, Mail, Twitter } from 'lucide-react'
+import { Mail, Github, Instagram, Twitter, Video } from 'lucide-react'
 
 const contactInfo = [
-  { icon: Github, label: 'GitHub', url: 'https://github.com/yourusername' },
-  { icon: Linkedin, label: 'LinkedIn', url: 'https://www.linkedin.com/in/yourlinkedinprofile' },
-  { icon: Twitter, label: 'Twitter', url: 'https://twitter.com/yourtwitterhandle' },
-  { icon: Mail, label: 'Email', url: 'mailto:your.email@example.com' },
+  { icon: Mail, label: 'Email', url: 'mailto:cooperfeatherstonellc@gmail.com' },
+  { icon: Github, label: 'GitHub', url: 'https://github.com/cooperfeatherstonellc' },
+  { icon: Instagram, label: 'Instagram', url: 'https://www.instagram.com/helpfulgrowthtips' },
+  { icon: Twitter, label: 'X (Twitter)', url: 'https://twitter.com/yourtwitterhandle' },
+  { icon: Video, label: 'TikTok', url: 'https://www.tiktok.com/@yourtiktokhandle' },
 ]
 
 export default function ContactInfo() {
