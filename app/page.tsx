@@ -1,23 +1,12 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import { Suspense } from 'react'
 import ProjectsSection from '../components/ProjectsSection'
 import ContactInfo from '../components/ContactInfo'
 import LoadingAnimation from '../components/LoadingAnimation'
 
 export default function Home() {
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 text-gray-800">
-      {loading ? (
-        <LoadingAnimation />
-      ) : (
+      <Suspense fallback={<LoadingAnimation />}>
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <header className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-indigo-800 mb-2">Cooper Featherstone LLC</h1>
@@ -33,7 +22,7 @@ export default function Home() {
             <p>© {new Date().getFullYear()} Cooper Featherstone LLC. All rights reserved.</p>
           </footer>
         </div>
-      )}
+      </Suspense>
     </div>
   )
 }
