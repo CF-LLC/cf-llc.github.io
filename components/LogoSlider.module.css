@@ -1,0 +1,20 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Adjusts the grid layout */
+  width: 216px; /* Set width of the grid container */
+  height: 216px; /* Set height of the grid container */
+  position: relative; /* Ensure proper positioning */
+}
+
+.grid-button {
+  width: 50px; /* Adjust based on your layout */
+  height: 50px; /* Adjust based on your layout */
+  border: none; /* Remove default button border */
+  cursor: pointer; /* Change cursor on hover */
+  background-size: 216px; /* Adjust background size */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.grid-button:hover {
+  background-color: rgba(0, 47, 255, 0.1); /* Optional hover effect */
+}

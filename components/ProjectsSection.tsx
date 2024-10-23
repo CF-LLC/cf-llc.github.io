@@ -40,7 +40,7 @@ export default function ProjectsSection() {
   useEffect(() => {
     fetch('https://api.github.com/users/cooperfeatherstonellc/repos')
       .then(response => response.json())
-      .then(data => setProjects(data.slice(0, 6))) // Display up to 6 projects
+      .then(data => setProjects(data.slice(0, 12))) // Displaying only the first 12 projects
       .catch(error => console.error('Error fetching projects:', error))
   }, [])
 

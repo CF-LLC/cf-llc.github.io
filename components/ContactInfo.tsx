@@ -1,5 +1,5 @@
 import { Mail, Github, Instagram, Twitter, Video } from 'lucide-react'
-
+// SquarePlus,
 const contactInfo = [
   { icon: Mail, label: 'Email', url: 'mailto:cooperfeatherstonellc@gmail.com' },
   { icon: Github, label: 'GitHub', url: 'https://github.com/cooperfeatherstonellc' },
