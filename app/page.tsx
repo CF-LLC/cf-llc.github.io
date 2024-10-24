@@ -6,7 +6,7 @@ const ProjectsSection = React.lazy(() => import('../components/ProjectsSection')
 const ContactInfo = React.lazy(() => import('../components/ContactInfo'));
 const TicTacToe = dynamic(() => import('../components/TicTacToe'), { ssr: false })
 const LogoSlider = dynamic(() => import('../components/LogoSlider'), { ssr: false })
-const MiniChess = dynamic(() => import('../components/MiniChess'), { ssr: false })
+const Othello = dynamic(() => import('../components/Othello'), { ssr: false })
 
 export default function Home() {
   return (
@@ -43,7 +43,7 @@ export default function Home() {
                   <div className="bg-[rgb(226,231,255)] p-4 rounded-lg shadow-md">
                     <h3 className="text-xl font-semibold mb-4 text-center">Hard</h3>
                     <Suspense fallback={<LoadingAnimation />}>
-                      <MiniChess />
+                      <Othello />
                     </Suspense>
                   </div>
                 </div>
