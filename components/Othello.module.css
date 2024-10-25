@@ -56,7 +56,7 @@
   
   .scoreContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     width: 100%;
     margin-bottom: 16px;
   }
