@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Suspense } from 'react'
+import React from 'react'
 import dynamic from 'next/dynamic'
 import LoadingAnimation from '../components/LoadingAnimation'
 import Image from 'next/image'
@@ -47,7 +47,7 @@ export default function Home() {
           <ContactInfo />
           <section className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="p-6">
-              <h2 className="text-3xl font-semibold text-center mb-8 text-indigo-800">In Case You're Board</h2>
+              <h2 className="text-3xl font-semibold text-center mb-8">In Case You're Bored</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-[rgb(226,231,255)] p-4 rounded-lg shadow-md">
                   <h3 className="text-xl font-semibold mb-4 text-center">Easy</h3>

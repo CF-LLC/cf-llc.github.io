@@ -8,6 +8,14 @@ export default function LogoSlider() {
   const [isSolved, setIsSolved] = useState(false)
   const [isShuffled, setIsShuffled] = useState(false)
 
+  const checkSolution = useCallback((currentTiles: number[]) => {
+    const solved = currentTiles.every((tile, index) => tile === index)
+    setIsSolved(solved)
+    if (solved) {
+      setIsShuffled(false)
+    }
+  }, [])
+
   const shuffleTiles = useCallback(() => {
     const newTiles = [...tiles]
     for (let i = newTiles.length - 1; i > 0; i--) {
@@ -33,15 +41,7 @@ export default function LogoSlider() {
       setTiles(newTiles)
       checkSolution(newTiles)
     }
-  }, [isShuffled, tiles])
-
-  const checkSolution = useCallback((currentTiles: number[]) => {
-    const solved = currentTiles.every((tile, index) => tile === index)
-    setIsSolved(solved)
-    if (solved) {
-      setIsShuffled(false)
-    }
-  }, [])
+  }, [isShuffled, tiles, checkSolution])
 
   const resetPuzzle = useCallback(() => {
     setTiles(Array.from({ length: 16 }, (_, i) => i))
@@ -67,20 +67,24 @@ export default function LogoSlider() {
           </button>
         ))}
       </div>
-      {!isShuffled && !isSolved && (
-        <button onClick={shuffleTiles} className={styles.actionButton}>
-          Shuffle
-        </button>
-      )}
-      {isShuffled && !isSolved && (
-        <button onClick={resetPuzzle} className={styles.actionButton}>
-          Reset
-        </button>
-      )}
-      {isSolved && (
-        <div className={styles.celebration}>
+      {isSolved ? (
+        <div className={styles.popup + ' ' + styles.win}>
           Congratulations! You solved the puzzle!
+          <button onClick={resetPuzzle} className={styles.resetButton}>Reset</button>
         </div>
+      ) : (
+        <>
+          {!isShuffled && (
+            <button onClick={shuffleTiles} className={styles.actionButton}>
+              Shuffle
+            </button>
+          )}
+          {isShuffled && (
+            <button onClick={resetPuzzle} className={styles.actionButton}>
+              Reset
+            </button>
+          )}
+        </>
       )}
     </div>
   )

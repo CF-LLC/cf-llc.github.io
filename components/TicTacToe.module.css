@@ -1,48 +1,73 @@
 .game {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .board {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    width: 216px;
-    height: 216px;
-    margin-bottom: 16px;
-  }
-  
-  .square {
-    width: 70px;
-    height: 70px;
-    background: rgb(79, 70, 229);
-    border: none;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .winningSquare {
-    background: #90EE90;
-    color: rgb(79, 70, 229);
-  }
-  
-  .status {
-    margin-bottom: 16px;
-    font-size: 18px;
-  }
-  
-  .resetButton {
-    padding: 8px 16px;
-    background-color: rgb(79, 70, 229);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  width: 216px;
+  height: 216px;
+  margin-bottom: 16px;
+}
+
+.cell {
+  width: 70px;
+  height: 70px;
+  background: rgb(79, 70, 229);
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cell:disabled {
+  cursor: default;
+}
+
+.status {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+.win {
+  background-color: #90EE90;
+  color: #006400;
+}
+
+.lose {
+  background-color: #FFB6C1;
+  color: #8B0000;
+}
+
+.resetButton {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: rgb(79, 70, 229);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.resetButton:hover {
+  background-color: rgb(67, 56, 202);
+}

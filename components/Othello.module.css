@@ -1,92 +1,128 @@
 .game {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .board {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 1px;
-    width: 216px;
-    height: 216px;
-    background-color: rgb(226, 231, 255);
-    padding: 1px;
-    margin-bottom: 16px;
-  }
-  
-  .cell {
-    width: 25px;
-    height: 25px;
-    border-radius: 2px;
-    border: none;
-    background-color: rgb(79, 70, 229);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .cell:disabled {
-    cursor: default;
-  }
-  
-  .piece {
-    width: 21px;
-    height: 21px;
-    border-radius: 50%;
-  }
-  
-  .black .piece {
-    background-color: #000;
-  }
-  
-  .white .piece {
-    background-color: #fff;
-  }
-  
-  .validMove {
-    background-color: rgba(122, 111, 244, 0.7);
-  }
-  
-  .validMove:hover {
-    background-color: rgba(21, 9, 146, 0.9);
-  }
-  
-  .scoreContainer {
-    display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-    margin-bottom: 16px;
-  }
-  
-  .score {
-    font-size: 16px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .currentPlayer {
-    background-color: #90EE90;
-  }
-  
-  .controls {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .button {
-    padding: 8px 16px;
-    background-color: rgb(79, 70, 229);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .button:hover {
-    background-color: rgb(67, 56, 202);
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  width: 216px;
+  height: 216px;
+  background-color: rgb(226, 231, 255);
+  padding: 1px;
+  margin-bottom: 16px;
+}
+
+.cell {
+  width: 25px;
+  height: 25px;
+  border-radius: 2px;
+  border: none;
+  background-color: rgb(79, 70, 229);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell:disabled {
+  cursor: default;
+}
+
+.piece {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+}
+
+.black .piece {
+  background-color: #000;
+}
+
+.white .piece {
+  background-color: #fff;
+}
+
+.validMove {
+  background-color: rgba(121, 112, 222, 0.7);
+}
+
+.validMove:hover {
+  background-color: rgba(16, 6, 124, 0.9);
+}
+
+.scoreContainer {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.score {
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.currentPlayer {
+  background-color: #90EE90;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: rgb(79, 70, 229);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: rgb(67, 56, 202);
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+.win {
+  background-color: #90EE90;
+  color: #006400;
+}
+
+.lose {
+  background-color: #FFB6C1;
+  color: #8B0000;
+}
+
+.resetButton {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: rgb(79, 70, 229);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.resetButton:hover {
+  background-color: rgb(67, 56, 202);
+}
