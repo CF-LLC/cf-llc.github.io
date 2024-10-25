@@ -42,7 +42,7 @@ export default function ProjectsSection() {
   const [categories, setCategories] = useState<string[]>(['All'])
 
   useEffect(() => {
-    fetch('https://api.github.com/users/cooperfeatherstonellc/repos')
+    fetch('https://api.github.com/users/cf-llc/repos')
       .then(response => response.json())
       .then((data: unknown) => {
         if (Array.isArray(data)) {
