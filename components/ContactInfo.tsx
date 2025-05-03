@@ -5,7 +5,7 @@ import { Mail, Github, Instagram, Twitter, Video, SquarePlus } from 'lucide-reac
 const contactInfo = [
   { icon: SquarePlus, label: 'Apply', url: '#', isApply: true },
   { icon: Mail, label: 'Email', url: 'mailto:cooperfeatherstonellc@gmail.com' },
-  { icon: Github, label: 'GitHub', url: 'https://github.com/cooperfeatherstonellc' },
+  { icon: Github, label: 'GitHub', url: 'https://github.com/cf-llc' },
   { icon: Instagram, label: 'Instagram', url: 'https://www.instagram.com/helpfulgrowthtips' },
   { icon: Twitter, label: 'X (Twitter)', url: 'https://x.com/TipsFromACEO' },
   { icon: Video, label: 'TikTok', url: 'https://tiktok.com/@helpfulgrowthtips' },
