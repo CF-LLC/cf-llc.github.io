@@ -95,9 +95,9 @@ export default function ContactInfo() {
         >
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Apply or reach out</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Make the button do something useful.</h2>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Tell us what you want to build.</h2>
             <p className="mt-4 max-w-xl text-base leading-7 text-sky-100/72 sm:text-lg">
-              This intake form costs nothing to run. It opens the visitor&apos;s email app with their name, company, email, and proposal already filled in so you get a structured inquiry instead of a vague message.
+              Share your goals, timeline, and scope. We review each proposal and respond with clear next steps.
             </p>
           </div>
 
@@ -143,12 +143,9 @@ export default function ContactInfo() {
         >
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-sky-200/60">Application draft</p>
-              <h3 className="mt-2 text-2xl font-semibold text-white">Send application instantly</h3>
+              <p className="text-sm uppercase tracking-[0.3em] text-sky-200/60">Project intake</p>
+              <h3 className="mt-2 text-2xl font-semibold text-white">Start your proposal</h3>
             </div>
-            <span className="rounded-full border border-emerald-300/15 bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-200">
-              No monthly cost
-            </span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -214,7 +211,7 @@ export default function ContactInfo() {
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-md text-sm leading-6 text-sky-100/62">
-              This sends directly to your Formspree inbox. If it fails, users can still send the same details by email.
+              Include enough detail for us to estimate scope and recommend the right build path.
             </p>
             <motion.button
               type="submit"
@@ -224,21 +221,21 @@ export default function ContactInfo() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-950 shadow-lg shadow-sky-900/30 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Send className="h-4 w-4" />
-              {submitState === 'submitting' ? 'Sending...' : 'Send application'}
+              {submitState === 'submitting' ? 'Sending...' : 'Send proposal'}
             </motion.button>
           </div>
 
           {submitState === 'success' && (
             <p className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
-              Submission sent. Thank you, we&apos;ll follow up soon.
+              Proposal received. We&apos;ll follow up with next steps shortly.
             </p>
           )}
 
           {submitState === 'error' && (
             <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-200/10 px-4 py-3 text-sm text-amber-100">
-              <p>We couldn&apos;t submit through Formspree right now.</p>
+              <p>We couldn&apos;t send this right now. Please reach out directly by email.</p>
               <a href={mailtoHref} className="mt-2 inline-flex items-center font-semibold text-amber-50 underline underline-offset-2">
-                Open pre-filled email fallback
+                Email CF LLC directly
               </a>
             </div>
           )}

@@ -29,9 +29,9 @@ const Othello = dynamic(() => import('@/components/Othello'), {
 })
 
 const heroStats = [
-  { value: 'Fast', label: 'rapid execution' },
-  { value: 'Blue-chip', label: 'clean delivery standard' },
-  { value: 'No fluff', label: 'direct collaboration' },
+  { value: 'Product Websites', label: 'design + build + launch' },
+  { value: 'Automation Systems', label: 'remove repetitive manual work' },
+  { value: 'Technical Direction', label: 'focused, practical execution plans' },
 ]
 
 const sectionFade = {
@@ -39,6 +39,22 @@ const sectionFade = {
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.25 },
   transition: { duration: 0.65, ease: 'easeOut' as const }
+}
+
+const heroContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.15
+    }
+  }
+}
+
+const heroItem = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } }
 }
 
 export default function Home() {
@@ -74,33 +90,40 @@ export default function Home() {
 
         <main className="space-y-10" id="top">
           <section className="relative overflow-hidden rounded-[2rem] border border-sky-200/10 bg-[linear-gradient(135deg,rgba(8,33,63,0.9),rgba(8,25,46,0.75))] px-6 py-8 shadow-[0_32px_90px_rgba(0,0,0,0.38)] sm:px-10 sm:py-12 lg:px-14 lg:py-16">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 0.65, scale: 1 }}
+              transition={{ duration: 1.1, ease: 'easeOut' }}
+              className="pointer-events-none absolute left-[-6rem] top-[-5rem] h-64 w-64 rounded-full bg-sky-400/20 blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 0.55, scale: 1 }}
+              transition={{ duration: 1.15, ease: 'easeOut', delay: 0.1 }}
+              className="pointer-events-none absolute bottom-[-6rem] right-[-4rem] h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"
+            />
             <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_center,rgba(116,197,255,0.18),transparent_62%)] lg:block" />
             <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: 'easeOut' }}
-                className="max-w-3xl"
-              >
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-white/5 px-4 py-2 text-sm text-sky-100/90 backdrop-blur">
+              <motion.div variants={heroContainer} initial="hidden" animate="show" className="max-w-3xl">
+                <motion.div variants={heroItem} className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-white/5 px-4 py-2 text-sm text-sky-100/90 backdrop-blur">
                   <Sparkles className="h-4 w-4 text-sky-300" />
-                  Boutique delivery for web, automation, and product execution
-                </div>
-                <h1 className="hero-text max-w-4xl text-5xl font-semibold leading-[0.95] sm:text-6xl lg:text-7xl">
-                  A sharper brand presence for work that should not look generic.
-                </h1>
-                <p className="mt-6 max-w-2xl text-lg leading-8 text-sky-100/78 sm:text-xl">
-                  Cooper Featherstone LLC builds practical software, polished interfaces, and focused automation for teams that want speed without the sloppy edges.
-                </p>
+                  Cooper Featherstone LLC • software, automation, and digital systems
+                </motion.div>
+                <motion.h1 variants={heroItem} className="hero-text max-w-4xl text-5xl font-semibold leading-[0.95] sm:text-6xl lg:text-7xl">
+                  We build the digital engine behind your next phase of growth.
+                </motion.h1>
+                <motion.p variants={heroItem} className="mt-6 max-w-2xl text-lg leading-8 text-sky-100/78 sm:text-xl">
+                  From custom web builds to workflow automation and AI-assisted tools, CF LLC helps companies move faster with less friction and better execution.
+                </motion.p>
 
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <motion.div variants={heroItem} className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <motion.a
                     href="#apply"
                     whileHover={{ y: -3, scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     className="ring-pulse inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-sky-900/30"
                   >
-                    Start a conversation
+                    Book a project call
                     <ArrowRight className="h-4 w-4" />
                   </motion.a>
                   <motion.a
@@ -109,10 +132,10 @@ export default function Home() {
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200/20 bg-white/5 px-6 py-3 text-base font-medium text-sky-50 backdrop-blur"
                   >
-                    See recent work
+                    Explore portfolio
                     <ChevronDown className="h-4 w-4" />
                   </motion.a>
-                </div>
+                </motion.div>
               </motion.div>
 
               <motion.div
@@ -126,8 +149,8 @@ export default function Home() {
                     <BriefcaseBusiness className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-sm uppercase tracking-[0.28em] text-sky-200/65">What you get</p>
-                    <p className="text-lg font-semibold text-white">A more confident digital front</p>
+                    <p className="text-sm uppercase tracking-[0.28em] text-sky-200/65">How CF LLC helps</p>
+                    <p className="text-lg font-semibold text-white">Strategy, build, and ongoing execution</p>
                   </div>
                 </div>
 
@@ -142,7 +165,7 @@ export default function Home() {
                       className="rounded-2xl border border-sky-200/10 bg-sky-50/5 px-4 py-4"
                     >
                       <p className="text-2xl font-semibold text-white">{stat.value}</p>
-                      <p className="mt-1 text-sm uppercase tracking-[0.22em] text-sky-100/55">{stat.label}</p>
+                      <p className="mt-1 text-sm uppercase tracking-[0.2em] text-sky-100/55">{stat.label}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -163,42 +186,47 @@ export default function Home() {
             id="play"
             className="section-card overflow-hidden rounded-[2rem] p-6 sm:p-8"
           >
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <motion.div
+                animate={{ x: ['-10%', '110%'] }}
+                transition={{ duration: 7.5, repeat: Infinity, ease: 'linear' }}
+                className="absolute top-0 h-full w-24 bg-gradient-to-r from-transparent via-sky-300/12 to-transparent"
+              />
+            </div>
             <div className="mb-8 flex flex-col gap-3 text-center">
               <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Interactive extras</p>
-              <h2 className="text-3xl font-semibold text-white sm:text-4xl">A little motion should feel deliberate, not noisy.</h2>
+              <h2 className="text-3xl font-semibold text-white sm:text-4xl">Quick demos. Fast mechanics. Clean interactions.</h2>
               <p className="mx-auto max-w-2xl text-base text-sky-100/70 sm:text-lg">
-                Scroll, hover, and click states now have more energy. These side projects stay as playful proof that the site can move without turning chaotic.
+                These mini builds show interaction quality, UX polish, and problem-solving style in a hands-on way.
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <motion.div whileHover={{ y: -6, scale: 1.01 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
+              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: -0.6 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Easy</h3>
                 <div className="rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <TicTacToe />
                 </div>
               </motion.div>
-              <motion.div whileHover={{ y: -6, scale: 1.01 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
+              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: 0.6 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Normal</h3>
                 <div className="flex justify-center rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <LogoSlider />
                 </div>
               </motion.div>
-              <motion.div whileHover={{ y: -6, scale: 1.01 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20 md:col-span-2 xl:col-span-1">
+              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: -0.4 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20 md:col-span-2 xl:col-span-1">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Hard</h3>
                 <div className="rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <Othello />
                 </div>
               </motion.div>
             </div>
+
+            <div className="mt-8 border-t border-sky-200/12 pt-6 text-center text-sm text-sky-100/60">
+              © {new Date().getFullYear()} Cooper Featherstone LLC • Built and operated by CF LLC
+            </div>
           </motion.section>
         </main>
-
-        <footer className="mt-12 flex flex-col items-center justify-center gap-3 text-center text-sm text-sky-100/60 sm:mt-16 sm:flex-row">
-          <p>© {new Date().getFullYear()} Cooper Featherstone LLC</p>
-          <span className="hidden text-sky-100/25 sm:inline">•</span>
-          <p>Built to feel more premium, direct, and memorable.</p>
-        </footer>
       </div>
     </div>
   )
