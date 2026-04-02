@@ -2,28 +2,28 @@
 
 import React from 'react'
 import dynamic from 'next/dynamic'
-import LoadingAnimation from '../components/LoadingAnimation'
+import LoadingAnimation from '@/components/LoadingAnimation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, BriefcaseBusiness, ChevronDown, Sparkles } from 'lucide-react'
 
-const ProjectsSection = dynamic(() => import('../components/ProjectsSection'), {
+const ProjectsSection = dynamic(() => import('@/components/ProjectsSection'), {
   loading: () => <LoadingAnimation />,
   ssr: false
 })
-const ContactInfo = dynamic(() => import('../components/ContactInfo'), {
+const ContactInfo = dynamic(() => import('@/components/ContactInfo'), {
   loading: () => <LoadingAnimation />,
   ssr: false
 })
-const TicTacToe = dynamic(() => import('../components/TicTacToe'), {
+const TicTacToe = dynamic(() => import('@/components/TicTacToe'), {
   loading: () => <LoadingAnimation />,
   ssr: false
 })
-const LogoSlider = dynamic(() => import('../components/LogoSlider'), {
+const LogoSlider = dynamic(() => import('@/components/LogoSlider'), {
   loading: () => <LoadingAnimation />,
   ssr: false
 })
-const Othello = dynamic(() => import('../components/Othello'), {
+const Othello = dynamic(() => import('@/components/Othello'), {
   loading: () => <LoadingAnimation />,
   ssr: false
 })
