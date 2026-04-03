@@ -127,6 +127,37 @@ main {
   }
 }
 
+@keyframes gradientDrift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -145,5 +176,31 @@ main {
 
   .ring-pulse {
     animation: pulseBorder 3.2s ease-in-out infinite;
+  }
+
+  .animated-gradient {
+    background-size: 200% 200%;
+    animation: gradientDrift 9s ease-in-out infinite;
+  }
+
+  .card-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-sweep::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.12), transparent);
+    animation: sweep 4.8s linear infinite;
+    pointer-events: none;
+  }
+
+  .float-slow {
+    animation: floatSlow 4.6s ease-in-out infinite;
   }
 }

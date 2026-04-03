@@ -25,8 +25,6 @@ interface ApiProject {
 }
 
 const PROJECTS_FILE_PATH = '/projects.json'
-const GITHUB_PROJECTS_EDIT_URL = 'https://github.com/CF-LLC/cf-llc.github.io/edit/main/public/projects.json'
-
 const languageColors: { [key: string]: string } = {
   JavaScript: 'from-[#73d4ff] to-[#2680ff]',
   TypeScript: 'from-[#8ee6ff] to-[#2b7fff]',
@@ -126,24 +124,11 @@ export default function ProjectsSection() {
     <section className="section-card overflow-hidden rounded-[2rem] p-6 sm:p-8">
       <div className="mb-8 flex flex-col gap-3 text-center">
         <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Selected work</p>
-        <h2 className="text-3xl font-semibold text-white sm:text-4xl">Explore projects with a little more drama and a lot more clarity.</h2>
+        <h2 className="text-3xl font-semibold text-white sm:text-4xl">Live builds and source code, side by side.</h2>
         <p className="mx-auto max-w-3xl text-base leading-7 text-sky-100/70 sm:text-lg">
           Filter by topic, preview live products instantly, and jump directly into source or deployed versions.
         </p>
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={GITHUB_PROJECTS_EDIT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-sky-200/20 bg-sky-300/10 px-4 py-2 text-sm font-medium text-sky-100 hover:bg-sky-300/15"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Owner: edit project file
-          </a>
-        </div>
-        <p className="text-xs uppercase tracking-[0.2em] text-sky-100/45">
-          {dataSource === 'repo' ? 'Using repo project file' : 'Using live GitHub repos'}
-        </p>
+        <p className="text-xs uppercase tracking-[0.2em] text-sky-100/45">{dataSource === 'repo' ? 'Curated project list' : 'Live list from GitHub'}</p>
       </div>
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4">
@@ -188,7 +173,7 @@ export default function ProjectsSection() {
             exit={{ opacity: 0 }}
             whileHover={{ y: -8, scale: 1.01 }}
             transition={{ duration: 0.28, ease: 'easeOut' }}
-            className="group overflow-hidden rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 shadow-lg shadow-slate-950/20"
+            className="group card-sweep overflow-hidden rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 shadow-lg shadow-slate-950/20"
           >
             <div className={`relative min-h-[16.5rem] overflow-hidden p-5 ${project.homepage ? '' : `bg-gradient-to-br ${project.language && languageColors[project.language] ? languageColors[project.language] : 'from-[#7ed3ff] to-[#1262d8]'}`} `}>
               {project.homepage && (
@@ -197,10 +182,10 @@ export default function ProjectsSection() {
                     src={project.homepage}
                     title={`${project.name} live preview`}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full bg-slate-950"
+                    className="absolute inset-0 h-full w-full scale-[1.01] bg-slate-950 transition-transform duration-700 group-hover:scale-[1.06]"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-slate-900/15 via-slate-950/35 to-slate-950/88" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-950/30 to-slate-950/90" />
                 </>
               )}
               {!project.homepage && (
@@ -223,6 +208,19 @@ export default function ProjectsSection() {
                   {project.description || 'No description available.'}
                 </p>
               </motion.div>
+
+              {project.homepage && (
+                <motion.a
+                  href={project.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ y: -2 }}
+                  className="absolute bottom-4 left-4 z-10 inline-flex items-center rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-950 shadow-lg shadow-sky-900/35"
+                >
+                  <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
+                  Open Live Site
+                </motion.a>
+              )}
             </div>
             <div className="flex h-full flex-col p-5">
               <div className="mb-4 flex flex-wrap gap-2">

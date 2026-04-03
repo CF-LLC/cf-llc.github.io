@@ -77,7 +77,7 @@ export default function Home() {
             </div>
             <div>
               <p className="text-[0.7rem] uppercase tracking-[0.35em] text-sky-200/80">Cooper Featherstone LLC</p>
-              <p className="text-sm font-semibold text-white">Software that looks sharp and ships clean</p>
+              <p className="text-sm font-semibold text-white">Custom software and automation for growing teams</p>
             </div>
           </a>
 
@@ -89,7 +89,7 @@ export default function Home() {
         </motion.header>
 
         <main className="space-y-10" id="top">
-          <section className="relative overflow-hidden rounded-[2rem] border border-sky-200/10 bg-[linear-gradient(135deg,rgba(8,33,63,0.9),rgba(8,25,46,0.75))] px-6 py-8 shadow-[0_32px_90px_rgba(0,0,0,0.38)] sm:px-10 sm:py-12 lg:px-14 lg:py-16">
+          <section className="animated-gradient relative overflow-hidden rounded-[2rem] border border-sky-200/10 bg-[linear-gradient(135deg,rgba(8,33,63,0.9),rgba(8,25,46,0.75),rgba(6,29,56,0.95))] px-6 py-8 shadow-[0_32px_90px_rgba(0,0,0,0.38)] sm:px-10 sm:py-12 lg:px-14 lg:py-16">
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 0.65, scale: 1 }}
@@ -107,13 +107,13 @@ export default function Home() {
               <motion.div variants={heroContainer} initial="hidden" animate="show" className="max-w-3xl">
                 <motion.div variants={heroItem} className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-white/5 px-4 py-2 text-sm text-sky-100/90 backdrop-blur">
                   <Sparkles className="h-4 w-4 text-sky-300" />
-                  Cooper Featherstone LLC • software, automation, and digital systems
+                  Cooper Featherstone LLC • digital build partner
                 </motion.div>
                 <motion.h1 variants={heroItem} className="hero-text max-w-4xl text-5xl font-semibold leading-[0.95] sm:text-6xl lg:text-7xl">
-                  We build the digital engine behind your next phase of growth.
+                  Build smarter systems. Launch faster experiences.
                 </motion.h1>
                 <motion.p variants={heroItem} className="mt-6 max-w-2xl text-lg leading-8 text-sky-100/78 sm:text-xl">
-                  From custom web builds to workflow automation and AI-assisted tools, CF LLC helps companies move faster with less friction and better execution.
+                  CF LLC helps companies ship websites, automations, and internal tools that reduce busywork and increase speed across the business.
                 </motion.p>
 
                 <motion.div variants={heroItem} className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -121,9 +121,9 @@ export default function Home() {
                     href="#apply"
                     whileHover={{ y: -3, scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
-                    className="ring-pulse inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-sky-900/30"
+                    className="ring-pulse animated-gradient inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-sky-900/30"
                   >
-                    Book a project call
+                    Start your project
                     <ArrowRight className="h-4 w-4" />
                   </motion.a>
                   <motion.a
@@ -132,7 +132,7 @@ export default function Home() {
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200/20 bg-white/5 px-6 py-3 text-base font-medium text-sky-50 backdrop-blur"
                   >
-                    Explore portfolio
+                    View projects
                     <ChevronDown className="h-4 w-4" />
                   </motion.a>
                 </motion.div>
@@ -162,7 +162,8 @@ export default function Home() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, delay: 0.25 + index * 0.08 }}
                       whileHover={{ x: 4 }}
-                      className="rounded-2xl border border-sky-200/10 bg-sky-50/5 px-4 py-4"
+                      className="float-slow rounded-2xl border border-sky-200/10 bg-sky-50/5 px-4 py-4"
+                      style={{ animationDelay: `${index * 0.35}s` }}
                     >
                       <p className="text-2xl font-semibold text-white">{stat.value}</p>
                       <p className="mt-1 text-sm uppercase tracking-[0.2em] text-sky-100/55">{stat.label}</p>
@@ -184,7 +185,7 @@ export default function Home() {
           <motion.section
             {...sectionFade}
             id="play"
-            className="section-card overflow-hidden rounded-[2rem] p-6 sm:p-8"
+            className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8"
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <motion.div
