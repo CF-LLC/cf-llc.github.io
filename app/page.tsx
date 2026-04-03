@@ -33,9 +33,6 @@ export default function Home() {
   return (
     <div className="site-shell min-h-screen text-slate-50">
       <ScrollBackground />
-      <div className="grid-glow" />
-      <div className="ambient-orb left-[-6rem] top-24 h-48 w-48 bg-sky-400/30" />
-      <div className="ambient-orb right-[-3rem] top-[28rem] h-56 w-56 bg-blue-600/20 [animation-delay:1.2s]" />
 
       <div id="page-top" className="relative z-10 mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pb-20">
         <motion.header
@@ -147,11 +144,11 @@ export default function Home() {
             </div>
           </section>
 
-          <div id="projects">
+          <div id="projects" className="scroll-mt-28 sm:scroll-mt-32">
             <ProjectsSection />
           </div>
 
-          <div id="apply">
+          <div id="apply" className="scroll-mt-28 sm:scroll-mt-32">
             <ContactInfo />
           </div>
 
@@ -161,7 +158,7 @@ export default function Home() {
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.65, ease: 'easeOut' }}
             id="play"
-            className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8"
+            className="section-card relative overflow-hidden rounded-[2rem] p-6 scroll-mt-28 sm:p-8 sm:scroll-mt-32"
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <motion.div

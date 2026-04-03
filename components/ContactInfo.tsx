@@ -87,7 +87,7 @@ export default function ContactInfo() {
     <section className="section-card overflow-hidden rounded-[2rem] p-6 sm:p-8">
       <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
@@ -108,7 +108,7 @@ export default function ContactInfo() {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 18 }}
+                initial={false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -134,7 +134,7 @@ export default function ContactInfo() {
         </motion.div>
 
         <motion.form
-          initial={{ opacity: 0, y: 24 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}

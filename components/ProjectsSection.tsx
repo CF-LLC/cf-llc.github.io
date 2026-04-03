@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Code, ExternalLink, File, Github, Search } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { ChevronDown, Code, ExternalLink, File, Github, Search } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface Project {
   id: string
@@ -56,6 +56,7 @@ export default function ProjectsSection() {
   const [categories, setCategories] = useState<string[]>(['All'])
   const [dataSource, setDataSource] = useState<'repo' | 'github'>('github')
   const [isLoading, setIsLoading] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const applyProjectData = (nextProjects: Project[]) => {
     const cleaned = sanitizeProjects(nextProjects)
@@ -128,65 +129,97 @@ export default function ProjectsSection() {
 
   return (
     <section className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
-      <div className="mb-8 flex flex-col gap-3 text-center">
-        <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Selected work</p>
-        <h2 className="text-3xl font-semibold text-white sm:text-4xl">Live builds and source code, side by side.</h2>
-        <p className="mx-auto max-w-3xl text-base leading-7 text-sky-100/70 sm:text-lg">
-          Filter by topic, preview live products instantly, and jump directly into source or deployed versions.
-        </p>
-        <p className="text-xs uppercase tracking-[0.2em] text-sky-100/45">{dataSource === 'repo' ? 'Curated project list' : 'Live list from GitHub'}</p>
-      </div>
+      <button
+        type="button"
+        onClick={() => setIsExpanded(current => !current)}
+        className="group mb-2 flex w-full items-center justify-between gap-6 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 px-5 py-5 text-left transition-colors hover:border-sky-200/20 hover:bg-sky-50/10"
+        aria-expanded={isExpanded}
+        aria-controls="projects-panel"
+      >
+        <div className="flex flex-col gap-3">
+          <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Selected work</p>
+          <h2 className="text-3xl font-semibold text-white sm:text-4xl">Live builds and source code, side by side.</h2>
+          <p className="max-w-3xl text-base leading-7 text-sky-100/70 sm:text-lg">
+            {isExpanded
+              ? 'Filter by topic, preview live products instantly, and jump directly into source or deployed versions.'
+              : 'Project previews stay tucked away on first load. Expand this panel when you want to browse the work.'}
+          </p>
+          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-sky-100/45">
+            <span>{dataSource === 'repo' ? 'Curated project list' : 'Live list from GitHub'}</span>
+            {!isLoading && <span>{projects.length} projects loaded</span>}
+          </div>
+        </div>
 
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search projects..."
-            className="w-full rounded-full border border-sky-200/12 bg-slate-950/25 py-3 pl-10 pr-4 text-white placeholder:text-sky-100/35 focus:outline-none focus:ring-2 focus:ring-sky-300/20 sm:min-w-[260px]"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-100/40" size={20} />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {categories.map(category => (
-            <motion.button
-              key={category}
-              className={`px-3 py-1 rounded-full text-sm ${
-                selectedCategory === category
-                  ? 'bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 text-slate-950 shadow-lg shadow-sky-900/20'
-                  : 'bg-slate-100/10 text-sky-100/78 hover:bg-slate-100/15'
-              }`}
-              onClick={() => setSelectedCategory(category)}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              {category}
-            </motion.button>
-          ))}
-        </div>
-      </div>
-      {isLoading && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="animated-gradient min-h-[29rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(135deg,rgba(76,161,255,0.16),rgba(8,24,47,0.75),rgba(74,174,255,0.12))] shadow-[0_26px_70px_rgba(0,0,0,0.32)]"
-            />
-          ))}
-        </div>
-      )}
-
-      {!isLoading && (
         <motion.div
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          layout
+          animate={{ rotate: isExpanded ? 180 : 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 via-sky-400 to-blue-500 text-slate-950 shadow-lg shadow-sky-900/25"
         >
-          {filteredProjects.map(project => (
+          <ChevronDown className="h-6 w-6" />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            id="projects-panel"
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="mb-6 mt-6 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search projects..."
+                  className="w-full rounded-full border border-sky-200/12 bg-slate-950/25 py-3 pl-10 pr-4 text-white placeholder:text-sky-100/35 focus:outline-none focus:ring-2 focus:ring-sky-300/20 sm:min-w-[260px]"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-100/40" size={20} />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {categories.map(category => (
+                  <motion.button
+                    key={category}
+                    className={`rounded-full px-3 py-1 text-sm ${
+                      selectedCategory === category
+                        ? 'bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 text-slate-950 shadow-lg shadow-sky-900/20'
+                        : 'bg-slate-100/10 text-sky-100/78 hover:bg-slate-100/15'
+                    }`}
+                    onClick={() => setSelectedCategory(category)}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    {category}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {isLoading && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="animated-gradient min-h-[29rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(135deg,rgba(76,161,255,0.16),rgba(8,24,47,0.75),rgba(74,174,255,0.12))] shadow-[0_26px_70px_rgba(0,0,0,0.32)]"
+                  />
+                ))}
+              </div>
+            )}
+
+            {!isLoading && (
+              <motion.div
+                className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                layout
+              >
+                {filteredProjects.map(project => (
           <motion.div
             key={project.id}
             layout
-              initial={false}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             whileHover={{ y: -10, scale: 1.015, rotateX: 2 }}
@@ -200,7 +233,7 @@ export default function ProjectsSection() {
                     src={project.homepage}
                     title={`${project.name} live preview`}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full scale-[1.01] overflow-auto bg-slate-950 transition-transform duration-700 group-hover:scale-[1.045]"
+                    className="pointer-events-none absolute inset-0 h-full w-full scale-[1.01] bg-slate-950 transition-transform duration-700 group-hover:scale-[1.045]"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.16),rgba(3,10,20,0.36)_34%,rgba(3,10,20,0.78)_72%,rgba(3,10,20,0.93)_100%)]" />
@@ -277,21 +310,24 @@ export default function ProjectsSection() {
 
                 {project.homepage && (
                   <p className="max-w-[18rem] text-xs text-white/72 [text-shadow:0_1px_10px_rgba(0,0,0,0.75)]">
-                    Scroll inside the preview. If the site blocks embedding, open Live Site.
+                    Live preview shown on card. Use Live Site to open the full experience.
                   </p>
                 )}
               </div>
             </div>
           </motion.div>
-          ))}
-        </motion.div>
-      )}
+                ))}
+              </motion.div>
+            )}
 
-      {!isLoading && filteredProjects.length === 0 && (
-        <div className="mt-6 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 px-5 py-8 text-center text-sky-100/70">
-          No projects matched that search yet. Try clearing the term or choosing another topic.
-        </div>
-      )}
+            {!isLoading && filteredProjects.length === 0 && (
+              <div className="mt-6 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 px-5 py-8 text-center text-sky-100/70">
+                No projects matched that search yet. Try clearing the term or choosing another topic.
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
