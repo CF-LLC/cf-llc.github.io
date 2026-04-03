@@ -157,7 +157,7 @@ export default function Home() {
             className="section-card relative overflow-hidden rounded-[2rem] p-6 scroll-mt-28 sm:p-8 sm:scroll-mt-32"
           >
             <div className="mb-8 flex flex-col gap-3 text-center">
-              <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Interactive extras</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">In case you are bored</p>
               <h2 className="text-3xl font-semibold text-white sm:text-4xl">Quick demos. Fast mechanics. Clean interactions.</h2>
               <p className="mx-auto max-w-2xl text-base text-sky-100/70 sm:text-lg">
                 These mini builds show interaction quality, UX polish, and problem-solving style in a hands-on way.
