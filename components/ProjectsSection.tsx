@@ -24,7 +24,13 @@ interface ApiProject {
   topics: string[]
 }
 
+interface ProjectsConfig {
+  hiddenProjectIds?: Array<number | string>
+  hiddenProjectNames?: string[]
+}
+
 const PROJECTS_FILE_PATH = '/projects.json'
+const PROJECTS_CONFIG_FILE_PATH = '/projects.config.json'
 const languageColors: { [key: string]: string } = {
   JavaScript: 'from-[#73d4ff] to-[#2680ff]',
   TypeScript: 'from-[#8ee6ff] to-[#2b7fff]',
@@ -58,6 +64,43 @@ export default function ProjectsSection() {
   const [isLoading, setIsLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
 
+  const applyHiddenProjectConfig = useCallback((items: Project[], config: ProjectsConfig | null): Project[] => {
+    if (!config) {
+      return items
+    }
+
+    const hiddenIds = new Set((config.hiddenProjectIds ?? []).map(id => id.toString().trim()))
+    const hiddenNames = new Set((config.hiddenProjectNames ?? []).map(name => name.trim().toLowerCase()))
+
+    if (hiddenIds.size === 0 && hiddenNames.size === 0) {
+      return items
+    }
+
+    return items.filter(project => {
+      const projectId = project.id.trim()
+      const projectName = project.name.trim().toLowerCase()
+      return !hiddenIds.has(projectId) && !hiddenNames.has(projectName)
+    })
+  }, [])
+
+  const fetchProjectsConfig = useCallback(async (): Promise<ProjectsConfig | null> => {
+    try {
+      const response = await fetch(PROJECTS_CONFIG_FILE_PATH, { cache: 'no-store' })
+      if (!response.ok) {
+        return null
+      }
+
+      const data = await response.json() as unknown
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return null
+      }
+
+      return data as ProjectsConfig
+    } catch {
+      return null
+    }
+  }, [])
+
   const applyProjectData = (nextProjects: Project[]) => {
     const cleaned = sanitizeProjects(nextProjects)
     setProjects(cleaned)
@@ -67,10 +110,10 @@ export default function ProjectsSection() {
     setSelectedCategory('All')
   }
 
-  const loadFromGithub = useCallback(() => {
+  const loadFromGithub = useCallback(async () => {
     fetch('https://api.github.com/users/cf-llc/repos')
       .then(response => response.json())
-      .then((data: unknown) => {
+      .then(async (data: unknown) => {
         if (Array.isArray(data)) {
           const projectsWithTopics = data.map((project: unknown) => {
             const typedProject = project as ApiProject
@@ -84,7 +127,8 @@ export default function ProjectsSection() {
               topics: Array.isArray(typedProject.topics) ? typedProject.topics : []
             }
           })
-          applyProjectData(projectsWithTopics)
+          const config = await fetchProjectsConfig()
+          applyProjectData(applyHiddenProjectConfig(projectsWithTopics, config))
           setDataSource('github')
         }
         setIsLoading(false)
@@ -93,7 +137,7 @@ export default function ProjectsSection() {
         console.error('Error fetching projects:', error)
         setIsLoading(false)
       })
-  }, [])
+  }, [applyHiddenProjectConfig, fetchProjectsConfig])
 
   useEffect(() => {
     fetch(PROJECTS_FILE_PATH, { cache: 'no-store' })
@@ -103,10 +147,11 @@ export default function ProjectsSection() {
         }
         return response.json() as Promise<unknown>
       })
-      .then(data => {
+      .then(async data => {
         if (Array.isArray(data) && data.length > 0) {
           const typed = data as Project[]
-          applyProjectData(typed)
+          const config = await fetchProjectsConfig()
+          applyProjectData(applyHiddenProjectConfig(typed, config))
           setDataSource('repo')
           setIsLoading(false)
         } else {
@@ -116,7 +161,7 @@ export default function ProjectsSection() {
       .catch(() => {
         loadFromGithub()
       })
-  }, [loadFromGithub])
+  }, [applyHiddenProjectConfig, fetchProjectsConfig, loadFromGithub])
 
   useEffect(() => {
     const filtered = projects.filter(project =>
