@@ -127,6 +127,25 @@ export default function ProjectsSection() {
     setFilteredProjects(filtered)
   }, [searchTerm, selectedCategory, projects])
 
+  useEffect(() => {
+    const openProjects = () => setIsExpanded(true)
+    const openProjectsFromHash = () => {
+      if (window.location.hash === '#projects') {
+        openProjects()
+      }
+    }
+
+    openProjectsFromHash()
+
+    window.addEventListener('open-projects', openProjects)
+    window.addEventListener('hashchange', openProjectsFromHash)
+
+    return () => {
+      window.removeEventListener('open-projects', openProjects)
+      window.removeEventListener('hashchange', openProjectsFromHash)
+    }
+  }, [])
+
   return (
     <section className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
       <button

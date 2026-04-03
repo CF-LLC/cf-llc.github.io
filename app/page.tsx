@@ -98,6 +98,7 @@ export default function Home() {
                   </motion.a>
                   <motion.a
                     href="#projects"
+                    onClick={() => window.dispatchEvent(new Event('open-projects'))}
                     whileHover={{ y: -3 }}
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-sky-200/20 bg-white/5 px-6 py-3 text-base font-medium text-sky-50 backdrop-blur"
