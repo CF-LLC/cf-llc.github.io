@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Code, ExternalLink, File, Github, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -55,6 +55,7 @@ export default function ProjectsSection() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [categories, setCategories] = useState<string[]>(['All'])
   const [dataSource, setDataSource] = useState<'repo' | 'github'>('github')
+  const [isLoading, setIsLoading] = useState(true)
 
   const applyProjectData = (nextProjects: Project[]) => {
     const cleaned = sanitizeProjects(nextProjects)
@@ -65,7 +66,7 @@ export default function ProjectsSection() {
     setSelectedCategory('All')
   }
 
-  const loadFromGithub = () => {
+  const loadFromGithub = useCallback(() => {
     fetch('https://api.github.com/users/cf-llc/repos')
       .then(response => response.json())
       .then((data: unknown) => {
@@ -85,9 +86,13 @@ export default function ProjectsSection() {
           applyProjectData(projectsWithTopics)
           setDataSource('github')
         }
+        setIsLoading(false)
       })
-      .catch(error => console.error('Error fetching projects:', error))
-  }
+      .catch(error => {
+        console.error('Error fetching projects:', error)
+        setIsLoading(false)
+      })
+  }, [])
 
   useEffect(() => {
     fetch(PROJECTS_FILE_PATH, { cache: 'no-store' })
@@ -102,6 +107,7 @@ export default function ProjectsSection() {
           const typed = data as Project[]
           applyProjectData(typed)
           setDataSource('repo')
+          setIsLoading(false)
         } else {
           loadFromGithub()
         }
@@ -109,7 +115,7 @@ export default function ProjectsSection() {
       .catch(() => {
         loadFromGithub()
       })
-  }, [])
+  }, [loadFromGithub])
 
   useEffect(() => {
     const filtered = projects.filter(project =>
@@ -121,7 +127,7 @@ export default function ProjectsSection() {
   }, [searchTerm, selectedCategory, projects])
 
   return (
-    <section className="section-card overflow-hidden rounded-[2rem] p-6 sm:p-8">
+    <section className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
       <div className="mb-8 flex flex-col gap-3 text-center">
         <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Selected work</p>
         <h2 className="text-3xl font-semibold text-white sm:text-4xl">Live builds and source code, side by side.</h2>
@@ -160,112 +166,128 @@ export default function ProjectsSection() {
           ))}
         </div>
       </div>
-      <motion.div
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        layout
-      >
-        {filteredProjects.map(project => (
+      {isLoading && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="animated-gradient min-h-[29rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(135deg,rgba(76,161,255,0.16),rgba(8,24,47,0.75),rgba(74,174,255,0.12))] shadow-[0_26px_70px_rgba(0,0,0,0.32)]"
+            />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && (
+        <motion.div
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          layout
+        >
+          {filteredProjects.map(project => (
           <motion.div
             key={project.id}
             layout
-            initial={{ opacity: 0, y: 26 }}
+              initial={false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            whileHover={{ y: -8, scale: 1.01 }}
+            whileHover={{ y: -10, scale: 1.015, rotateX: 2 }}
             transition={{ duration: 0.28, ease: 'easeOut' }}
-            className="group card-sweep overflow-hidden rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 shadow-lg shadow-slate-950/20"
+            className="group card-sweep relative min-h-[29rem] overflow-hidden rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 shadow-[0_26px_70px_rgba(0,0,0,0.32)]"
           >
-            <div className={`relative min-h-[16.5rem] overflow-hidden p-5 ${project.homepage ? '' : `bg-gradient-to-br ${project.language && languageColors[project.language] ? languageColors[project.language] : 'from-[#7ed3ff] to-[#1262d8]'}`} `}>
+            <div className={`absolute inset-0 ${project.homepage ? '' : `bg-gradient-to-br ${project.language && languageColors[project.language] ? languageColors[project.language] : 'from-[#7ed3ff] to-[#1262d8]'}`} `}>
               {project.homepage && (
                 <>
                   <iframe
                     src={project.homepage}
                     title={`${project.name} live preview`}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full scale-[1.01] bg-slate-950 transition-transform duration-700 group-hover:scale-[1.06]"
+                    className="absolute inset-0 h-full w-full scale-[1.01] overflow-auto bg-slate-950 transition-transform duration-700 group-hover:scale-[1.045]"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-950/30 to-slate-950/90" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.16),rgba(3,10,20,0.36)_34%,rgba(3,10,20,0.78)_72%,rgba(3,10,20,0.93)_100%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(130,214,255,0.18),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(75,132,255,0.14),transparent_22%)]" />
                 </>
               )}
               {!project.homepage && (
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.3),transparent_28%)] opacity-70" />
               )}
-              <div className="absolute right-3 top-3 rounded-full bg-white/85 p-2 text-slate-900 shadow">
-                {project.language ? (
-                  <Code className="h-5 w-5" />
-                ) : (
-                  <File className="h-5 w-5" />
-                )}
-              </div>
+              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_40%,rgba(255,255,255,0.03))] opacity-70" />
+            </div>
+
+            <div className="absolute right-4 top-4 z-20 rounded-full bg-white/88 p-2 text-slate-900 shadow-lg shadow-slate-950/25 backdrop-blur">
+              {project.language ? (
+                <Code className="h-5 w-5" />
+              ) : (
+                <File className="h-5 w-5" />
+              )}
+            </div>
+
+            <div className="absolute inset-0 z-10 flex flex-col justify-between p-5 pointer-events-none">
               <motion.div
-                className="relative pr-10"
-                initial={{ opacity: 0.92, y: 6 }}
+                className="max-w-[86%] rounded-[1.35rem] border border-white/14 bg-slate-950/42 p-4 backdrop-blur-md"
+                initial={false}
                 whileHover={{ opacity: 1, y: 0 }}
               >
-                <h3 className="mb-2 text-xl font-bold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)]">{project.name}</h3>
-                <p className="mb-4 line-clamp-3 text-sm text-white/92 drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)]">
+                <h3 className="mb-2 text-xl font-bold text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)]">{project.name}</h3>
+                <p className="line-clamp-4 text-sm leading-6 text-white/92 [text-shadow:0_2px_12px_rgba(0,0,0,0.78)]">
                   {project.description || 'No description available.'}
                 </p>
               </motion.div>
 
-              {project.homepage && (
-                <motion.a
-                  href={project.homepage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -2 }}
-                  className="absolute bottom-4 left-4 z-10 inline-flex items-center rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-950 shadow-lg shadow-sky-900/35"
-                >
-                  <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
-                  Open Live Site
-                </motion.a>
-              )}
-            </div>
-            <div className="flex h-full flex-col p-5">
-              <div className="mb-4 flex flex-wrap gap-2">
-                {project.topics.slice(0, 3).map(topic => (
-                  <span key={topic} className="rounded-full border border-sky-200/10 bg-sky-300/10 px-2 py-1 text-xs text-sky-100/84">
-                    {topic}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-auto flex justify-between gap-4 pt-4 text-sm">
-                <a
-                  href={project.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full border border-sky-200/20 bg-sky-50/5 px-3 py-1.5 text-sky-200 transition-colors hover:border-sky-100/45 hover:text-white"
-                >
-                  <Github className="mr-2 h-4 w-4" />
-                  Source
-                </a>
-                {project.homepage && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {project.topics.slice(0, 3).map(topic => (
+                    <span
+                      key={topic}
+                      className="rounded-full border border-white/14 bg-slate-950/45 px-2.5 py-1 text-xs font-medium text-white/92 backdrop-blur-md [text-shadow:0_1px_8px_rgba(0,0,0,0.68)]"
+                    >
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
                   <a
-                    href={project.homepage}
+                    href={project.html_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-3 py-1.5 font-semibold text-slate-950 shadow-lg shadow-sky-900/30"
+                    className="inline-flex items-center rounded-full border border-white/16 bg-slate-950/42 px-3.5 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:border-white/32 hover:bg-slate-950/55"
                   >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Live Site
+                    <Github className="mr-2 h-4 w-4" />
+                    Source
                   </a>
-                )}
-                {!project.homepage && (
-                  <span className="inline-flex items-center rounded-full border border-slate-400/20 bg-slate-200/10 px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-slate-300/80">
-                    No live site yet
-                  </span>
+
+                  {project.homepage && (
+                    <a
+                      href={project.homepage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="animated-gradient inline-flex items-center rounded-full bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-900/30"
+                    >
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Live Site
+                    </a>
+                  )}
+
+                  {!project.homepage && (
+                    <span className="inline-flex items-center rounded-full border border-white/16 bg-slate-950/42 px-3.5 py-2 text-xs font-medium uppercase tracking-[0.16em] text-white/78 backdrop-blur-md">
+                      No live site yet
+                    </span>
+                  )}
+                </div>
+
+                {project.homepage && (
+                  <p className="max-w-[18rem] text-xs text-white/72 [text-shadow:0_1px_10px_rgba(0,0,0,0.75)]">
+                    Scroll inside the preview. If the site blocks embedding, open Live Site.
+                  </p>
                 )}
               </div>
-              {project.homepage && (
-                <p className="mt-3 text-xs text-sky-100/45">If preview is blocked by site security, open Live Site.</p>
-              )}
             </div>
           </motion.div>
-        ))}
-      </motion.div>
+          ))}
+        </motion.div>
+      )}
 
-      {filteredProjects.length === 0 && (
+      {!isLoading && filteredProjects.length === 0 && (
         <div className="mt-6 rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 px-5 py-8 text-center text-sky-100/70">
           No projects matched that search yet. Try clearing the term or choosing another topic.
         </div>

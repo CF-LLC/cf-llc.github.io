@@ -3,18 +3,13 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import LoadingAnimation from '@/components/LoadingAnimation'
+import ProjectsSection from '@/components/ProjectsSection'
+import ContactInfo from '@/components/ContactInfo'
+import ScrollBackground from '@/components/ScrollBackground'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, BriefcaseBusiness, ChevronDown, Sparkles } from 'lucide-react'
 
-const ProjectsSection = dynamic(() => import('@/components/ProjectsSection'), {
-  loading: () => <LoadingAnimation />,
-  ssr: false
-})
-const ContactInfo = dynamic(() => import('@/components/ContactInfo'), {
-  loading: () => <LoadingAnimation />,
-  ssr: false
-})
 const TicTacToe = dynamic(() => import('@/components/TicTacToe'), {
   loading: () => <LoadingAnimation />,
   ssr: false
@@ -34,50 +29,28 @@ const heroStats = [
   { value: 'Technical Direction', label: 'focused, practical execution plans' },
 ]
 
-const sectionFade = {
-  initial: { opacity: 0, y: 44 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.25 },
-  transition: { duration: 0.65, ease: 'easeOut' as const }
-}
-
-const heroContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15
-    }
-  }
-}
-
-const heroItem = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } }
-}
-
 export default function Home() {
   return (
     <div className="site-shell min-h-screen text-slate-50">
+      <ScrollBackground />
       <div className="grid-glow" />
       <div className="ambient-orb left-[-6rem] top-24 h-48 w-48 bg-sky-400/30" />
       <div className="ambient-orb right-[-3rem] top-[28rem] h-56 w-56 bg-blue-600/20 [animation-delay:1.2s]" />
 
-      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pb-20">
+      <div id="page-top" className="relative z-10 mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pb-20">
         <motion.header
-          initial={{ opacity: 0, y: -20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
           className="glass-panel sticky top-4 z-30 mb-8 flex items-center justify-between rounded-full px-4 py-3 sm:px-6"
         >
-          <a href="#top" className="flex items-center gap-3">
+          <a href="#page-top" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 via-sky-400 to-blue-600 shadow-lg shadow-sky-900/30 ring-1 ring-white/20">
               <Image src="/favicon.ico" alt="CF LLC logo" width={28} height={28} />
             </div>
             <div>
               <p className="text-[0.7rem] uppercase tracking-[0.35em] text-sky-200/80">Cooper Featherstone LLC</p>
-              <p className="text-sm font-semibold text-white">Custom software and automation for growing teams</p>
+              <p className="text-sm font-semibold text-white">Custom Software Solutions</p>
             </div>
           </a>
 
@@ -91,32 +64,32 @@ export default function Home() {
         <main className="space-y-10" id="top">
           <section className="animated-gradient relative overflow-hidden rounded-[2rem] border border-sky-200/10 bg-[linear-gradient(135deg,rgba(8,33,63,0.9),rgba(8,25,46,0.75),rgba(6,29,56,0.95))] px-6 py-8 shadow-[0_32px_90px_rgba(0,0,0,0.38)] sm:px-10 sm:py-12 lg:px-14 lg:py-16">
             <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
+              initial={false}
               animate={{ opacity: 0.65, scale: 1 }}
               transition={{ duration: 1.1, ease: 'easeOut' }}
               className="pointer-events-none absolute left-[-6rem] top-[-5rem] h-64 w-64 rounded-full bg-sky-400/20 blur-3xl"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.7 }}
+              initial={false}
               animate={{ opacity: 0.55, scale: 1 }}
               transition={{ duration: 1.15, ease: 'easeOut', delay: 0.1 }}
               className="pointer-events-none absolute bottom-[-6rem] right-[-4rem] h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"
             />
             <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_center,rgba(116,197,255,0.18),transparent_62%)] lg:block" />
             <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
-              <motion.div variants={heroContainer} initial="hidden" animate="show" className="max-w-3xl">
-                <motion.div variants={heroItem} className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-white/5 px-4 py-2 text-sm text-sky-100/90 backdrop-blur">
+              <div className="max-w-3xl">
+                <motion.div initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-white/5 px-4 py-2 text-sm text-sky-100/90 backdrop-blur">
                   <Sparkles className="h-4 w-4 text-sky-300" />
                   Cooper Featherstone LLC • digital build partner
                 </motion.div>
-                <motion.h1 variants={heroItem} className="hero-text max-w-4xl text-5xl font-semibold leading-[0.95] sm:text-6xl lg:text-7xl">
+                <motion.h1 initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.05 }} className="hero-text max-w-4xl text-5xl font-semibold leading-[0.95] sm:text-6xl lg:text-7xl">
                   Build smarter systems. Launch faster experiences.
                 </motion.h1>
-                <motion.p variants={heroItem} className="mt-6 max-w-2xl text-lg leading-8 text-sky-100/78 sm:text-xl">
+                <motion.p initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.1 }} className="mt-6 max-w-2xl text-lg leading-8 text-sky-100/78 sm:text-xl">
                   CF LLC helps companies ship websites, automations, and internal tools that reduce busywork and increase speed across the business.
                 </motion.p>
 
-                <motion.div variants={heroItem} className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <motion.div initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.15 }} className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <motion.a
                     href="#apply"
                     whileHover={{ y: -3, scale: 1.01 }}
@@ -136,10 +109,10 @@ export default function Home() {
                     <ChevronDown className="h-4 w-4" />
                   </motion.a>
                 </motion.div>
-              </motion.div>
+              </div>
 
               <motion.div
-                initial={{ opacity: 0, x: 30 }}
+                initial={false}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.75, ease: 'easeOut', delay: 0.1 }}
                 className="glass-panel rounded-[1.75rem] p-6"
@@ -158,7 +131,7 @@ export default function Home() {
                   {heroStats.map((stat, index) => (
                     <motion.div
                       key={stat.value}
-                      initial={{ opacity: 0, x: 20 }}
+                      initial={false}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, delay: 0.25 + index * 0.08 }}
                       whileHover={{ x: 4 }}
@@ -174,16 +147,19 @@ export default function Home() {
             </div>
           </section>
 
-          <motion.div {...sectionFade} id="projects">
+          <div id="projects">
             <ProjectsSection />
-          </motion.div>
+          </div>
 
-          <motion.div {...sectionFade} id="apply">
+          <div id="apply">
             <ContactInfo />
-          </motion.div>
+          </div>
 
           <motion.section
-            {...sectionFade}
+            initial={false}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.65, ease: 'easeOut' }}
             id="play"
             className="section-card relative overflow-hidden rounded-[2rem] p-6 sm:p-8"
           >
