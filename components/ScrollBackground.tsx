@@ -27,6 +27,18 @@ const pulseNodes = [
     y: ['12%', '-14%'],
     scale: [0.85, 1.35],
   },
+  {
+    className: 'left-[42%] top-[10%] h-24 w-24 border-blue-200/20 bg-blue-200/10',
+    x: ['-8%', '14%'],
+    y: ['-6%', '24%'],
+    scale: [0.8, 1.28],
+  },
+  {
+    className: 'right-[34%] bottom-[10%] h-32 w-32 border-sky-300/20 bg-sky-300/10',
+    x: ['12%', '-18%'],
+    y: ['8%', '-10%'],
+    scale: [0.88, 1.3],
+  },
 ]
 
 export default function ScrollBackground() {
@@ -93,6 +105,24 @@ export default function ScrollBackground() {
   const scanlineY = useTransform(progress, [0, 1], ['-12%', '22%'])
   const scanlineOpacity = useTransform(progress, [0, 0.5, 1], [0.18, 0.34, 0.22])
 
+  const waveOneX = useTransform(progress, [0, 1], ['-18%', '16%'])
+  const waveOneY = useTransform(progress, [0, 1], ['28%', '6%'])
+  const waveOneRotate = useTransform(progress, [0, 1], [-20, 26])
+
+  const waveTwoX = useTransform(progress, [0, 1], ['16%', '-14%'])
+  const waveTwoY = useTransform(progress, [0, 1], ['62%', '42%'])
+  const waveTwoRotate = useTransform(progress, [0, 1], [24, -34])
+
+  const prismOneX = useTransform(progress, [0, 1], ['8%', '-10%'])
+  const prismOneY = useTransform(progress, [0, 1], ['-12%', '20%'])
+  const prismOneRotate = useTransform(progress, [0, 1], [0, 34])
+  const prismOneOpacity = useTransform(progress, [0, 0.5, 1], [0.14, 0.26, 0.18])
+
+  const prismTwoX = useTransform(progress, [0, 1], ['-8%', '14%'])
+  const prismTwoY = useTransform(progress, [0, 1], ['36%', '10%'])
+  const prismTwoRotate = useTransform(progress, [0, 1], [-8, 30])
+  const prismTwoOpacity = useTransform(progress, [0, 0.5, 1], [0.1, 0.22, 0.16])
+
   const atmosphereOneY = useTransform(progress, [0, 1], ['12%', '38%'])
   const atmosphereTwoY = useTransform(progress, [0, 1], ['18%', '56%'])
   const atmosphereThreeY = useTransform(progress, [0, 1], ['70%', '30%'])
@@ -113,14 +143,24 @@ export default function ScrollBackground() {
   const nodeFourY = useTransform(progress, [0, 1], pulseNodes[3].y)
   const nodeFourScale = useTransform(progress, [0, 1], pulseNodes[3].scale)
 
+  const nodeFiveX = useTransform(progress, [0, 1], pulseNodes[4].x)
+  const nodeFiveY = useTransform(progress, [0, 1], pulseNodes[4].y)
+  const nodeFiveScale = useTransform(progress, [0, 1], pulseNodes[4].scale)
+
+  const nodeSixX = useTransform(progress, [0, 1], pulseNodes[5].x)
+  const nodeSixY = useTransform(progress, [0, 1], pulseNodes[5].y)
+  const nodeSixScale = useTransform(progress, [0, 1], pulseNodes[5].scale)
+
   const backgroundNodes = [
     { className: pulseNodes[0].className, x: nodeOneX, y: nodeOneY, scale: nodeOneScale },
     { className: pulseNodes[1].className, x: nodeTwoX, y: nodeTwoY, scale: nodeTwoScale },
     { className: pulseNodes[2].className, x: nodeThreeX, y: nodeThreeY, scale: nodeThreeScale },
     { className: pulseNodes[3].className, x: nodeFourX, y: nodeFourY, scale: nodeFourScale },
+    { className: pulseNodes[4].className, x: nodeFiveX, y: nodeFiveY, scale: nodeFiveScale },
+    { className: pulseNodes[5].className, x: nodeSixX, y: nodeSixY, scale: nodeSixScale },
   ]
 
-  const atmosphere = useMotionTemplate`radial-gradient(circle at 18% ${atmosphereOneY}, rgba(146, 222, 255, 0.14), transparent 24%), radial-gradient(circle at 82% ${atmosphereTwoY}, rgba(73, 151, 255, 0.18), transparent 26%), radial-gradient(circle at 50% ${atmosphereThreeY}, rgba(51, 119, 255, 0.16), transparent 28%), linear-gradient(180deg, rgba(3, 11, 26, 0.15), rgba(3, 10, 24, 0.78))`
+  const atmosphere = useMotionTemplate`radial-gradient(circle at 18% ${atmosphereOneY}, rgba(146, 222, 255, 0.18), transparent 24%), radial-gradient(circle at 82% ${atmosphereTwoY}, rgba(73, 151, 255, 0.22), transparent 26%), radial-gradient(circle at 50% ${atmosphereThreeY}, rgba(51, 119, 255, 0.2), transparent 28%), radial-gradient(circle at 66% 14%, rgba(64, 156, 255, 0.12), transparent 34%), linear-gradient(180deg, rgba(3, 11, 26, 0.1), rgba(3, 10, 24, 0.8))`
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -178,6 +218,26 @@ export default function ScrollBackground() {
           className="absolute inset-x-0 top-[-10%] h-[60%] bg-[linear-gradient(180deg,transparent,rgba(166,230,255,0.12),transparent)] blur-3xl"
         />
 
+        <motion.div
+          style={{ x: waveOneX, y: waveOneY, rotate: waveOneRotate }}
+          className="absolute left-[-20%] top-[18%] h-[18rem] w-[110rem] bg-[linear-gradient(90deg,transparent,rgba(114,205,255,0.12),rgba(30,114,255,0.26),rgba(114,205,255,0.08),transparent)] blur-3xl"
+        />
+
+        <motion.div
+          style={{ x: waveTwoX, y: waveTwoY, rotate: waveTwoRotate }}
+          className="absolute right-[-24%] top-[44%] h-[16rem] w-[96rem] bg-[linear-gradient(90deg,transparent,rgba(142,226,255,0.1),rgba(43,124,255,0.22),rgba(142,226,255,0.08),transparent)] blur-3xl"
+        />
+
+        <motion.div
+          style={{ x: prismOneX, y: prismOneY, rotate: prismOneRotate, opacity: prismOneOpacity }}
+          className="absolute left-[2%] top-[8%] h-[26rem] w-[26rem] bg-[conic-gradient(from_120deg_at_50%_50%,rgba(176,241,255,0.2),rgba(67,135,255,0.06),rgba(115,220,255,0.24),rgba(22,69,174,0.08),rgba(176,241,255,0.2))] [clip-path:polygon(50%_0%,100%_36%,82%_100%,18%_100%,0%_36%)] blur-2xl"
+        />
+
+        <motion.div
+          style={{ x: prismTwoX, y: prismTwoY, rotate: prismTwoRotate, opacity: prismTwoOpacity }}
+          className="absolute right-[8%] top-[22%] h-[22rem] w-[30rem] bg-[radial-gradient(circle_at_30%_38%,rgba(169,232,255,0.2),rgba(52,125,255,0.16)_45%,transparent_72%)] [clip-path:polygon(12%_12%,100%_0%,86%_84%,0%_100%)] blur-2xl"
+        />
+
         {backgroundNodes.map((node, index) => (
           <motion.div
             key={index}
@@ -187,7 +247,7 @@ export default function ScrollBackground() {
         ))}
       </motion.div>
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_18%),radial-gradient(circle_at_bottom,rgba(9,29,74,0.22),transparent_52%)] mix-blend-screen" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(199,239,255,0.12),transparent_18%),radial-gradient(circle_at_80%_10%,rgba(80,157,255,0.16),transparent_24%),radial-gradient(circle_at_bottom,rgba(9,29,74,0.22),transparent_52%)] mix-blend-screen" />
 
       <div className="absolute inset-0 opacity-[0.12] [background-image:radial-gradient(rgba(220,245,255,0.6)_0.8px,transparent_0.8px)] [background-size:26px_26px]" />
 

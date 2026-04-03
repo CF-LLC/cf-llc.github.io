@@ -152,21 +152,10 @@ export default function Home() {
             <ContactInfo />
           </div>
 
-          <motion.section
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.65, ease: 'easeOut' }}
+          <section
             id="play"
             className="section-card relative overflow-hidden rounded-[2rem] p-6 scroll-mt-28 sm:p-8 sm:scroll-mt-32"
           >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              <motion.div
-                animate={{ x: ['-10%', '110%'] }}
-                transition={{ duration: 7.5, repeat: Infinity, ease: 'linear' }}
-                className="absolute top-0 h-full w-24 bg-gradient-to-r from-transparent via-sky-300/12 to-transparent"
-              />
-            </div>
             <div className="mb-8 flex flex-col gap-3 text-center">
               <p className="text-sm uppercase tracking-[0.35em] text-sky-200/60">Interactive extras</p>
               <h2 className="text-3xl font-semibold text-white sm:text-4xl">Quick demos. Fast mechanics. Clean interactions.</h2>
@@ -176,30 +165,30 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: -0.6 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
+              <div className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Easy</h3>
                 <div className="rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <TicTacToe />
                 </div>
-              </motion.div>
-              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: 0.6 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
+              </div>
+              <div className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Normal</h3>
                 <div className="flex justify-center rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <LogoSlider />
                 </div>
-              </motion.div>
-              <motion.div whileHover={{ y: -10, scale: 1.02, rotate: -0.4 }} className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20 md:col-span-2 xl:col-span-1">
+              </div>
+              <div className="rounded-[1.5rem] border border-sky-200/10 bg-sky-50/5 p-4 shadow-lg shadow-slate-950/20 md:col-span-2 xl:col-span-1">
                 <h3 className="mb-4 text-center text-xl font-semibold text-white">Hard</h3>
                 <div className="rounded-[1.25rem] border border-sky-200/10 bg-[#d8efff] p-4 text-slate-900">
                   <Othello />
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             <div className="mt-8 border-t border-sky-200/12 pt-6 text-center text-sm text-sky-100/60">
               © {new Date().getFullYear()} Cooper Featherstone LLC • Built and operated by CF LLC
             </div>
-          </motion.section>
+          </section>
         </main>
       </div>
     </div>
