@@ -13,8 +13,8 @@ const manrope = Manrope({
 })
 
 export const metadata: Metadata = {
-  title: 'Cooper Featherstone LLC',
-  description: 'Boutique software, automation, and digital execution for teams that need sharp delivery.',
+  title: 'Cooper Featherstone — Full-Stack Developer',
+  description: 'Full-Stack Developer building production-ready SaaS and web applications with React, Next.js, authentication, and APIs.',
   icons: [
     { rel: 'icon', url: '/favicon.ico' },
     { rel: 'apple-touch-icon', sizes: '180x180', url: '/apple-touch-icon.png' },
