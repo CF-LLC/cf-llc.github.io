@@ -1,41 +1,24 @@
-# Cooper Featherstone LLC Website
+# Cooper Featherstone LLC
 
-This repository contains the source code for the Cooper Featherstone LLC website, a showcase of innovative solutions and exceptional results.
+Portfolio site for Cooper Featherstone, founder of Cooper Featherstone LLC.
 
-## Description
+Positioning: full-stack developer building production-ready SaaS and web applications.
 
-This website is built using Next.js and deployed on GitHub Pages. It features a responsive design, project showcases, and contact information for Cooper Featherstone LLC.
+## Stack
 
-## Features
+- Next.js (static export)
+- React + TypeScript
+- Tailwind CSS
+- Framer Motion
+- Canvas scene for the hero particle field
 
-- Responsive design
-- Project showcase
-- Contact information
-- Integration with GitHub for displaying recent projects
+## Deploy
 
-## Temporarily Hide Projects
+GitHub Pages via `.github/workflows/deploy.yml`. Build command:
 
-You can hide projects from the website without deleting them.
-
-1. Open `public/projects.config.json`.
-2. Add the repo `id` values to `hiddenProjectIds`, or add repo names to `hiddenProjectNames`.
-3. Commit and deploy when ready.
-
-Example:
-
-```json
-{
-	"hiddenProjectIds": [123456789],
-	"hiddenProjectNames": ["old-landing-page", "demo-app"]
-}
+```bash
+npm ci
+npm run build
 ```
 
-To show a project again, remove it from those arrays.
-
-## Technologies Used
-
-- Next.js
-- React
-- Tailwind CSS
-- GitHub Pages for hosting
-
+The workflow publishes `./out` to the `gh-pages` branch.
