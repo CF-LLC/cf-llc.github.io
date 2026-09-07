@@ -1,7 +1,6 @@
 'use client'
 
 import { ExternalLink, Github } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 type Project = {
   name: string
@@ -11,7 +10,6 @@ type Project = {
   proof: string
   source: string
   live?: string
-  accent: 'magenta' | 'cyan' | 'orange'
 }
 
 const projects: Project[] = [
@@ -27,7 +25,6 @@ const projects: Project[] = [
     proof: 'Live at myfunnelr.vercel.app. Source includes auth pages, API routes for funnels/billing/AI, and a Supabase-backed schema.',
     source: 'https://github.com/CF-LLC/funnel-maker',
     live: 'https://myfunnelr.vercel.app',
-    accent: 'magenta',
   },
   {
     name: 'Daily Methods Hub',
@@ -41,7 +38,6 @@ const projects: Project[] = [
     proof: 'Deployed at daily-methods-hub.vercel.app. Repo contains auth callbacks, server actions, and API routes rather than a static demo page.',
     source: 'https://github.com/CF-LLC/DailyMethodsHub',
     live: 'https://daily-methods-hub.vercel.app',
-    accent: 'cyan',
   },
   {
     name: 'IG Command Center',
@@ -54,7 +50,6 @@ const projects: Project[] = [
     stack: 'Next.js, TypeScript, Tailwind, shadcn/ui, Prisma, PostgreSQL, OpenAI',
     proof: 'Public source at CF-LLC/IG-Command-Center documents a production-shaped app with demo mode and a real database path. No public marketing homepage is published yet.',
     source: 'https://github.com/CF-LLC/IG-Command-Center',
-    accent: 'orange',
   },
   {
     name: 'InvoiceForge',
@@ -68,7 +63,6 @@ const projects: Project[] = [
     proof: 'Live on GitHub Pages at cf-llc.github.io/InvoiceForge with the source in CF-LLC/InvoiceForge.',
     source: 'https://github.com/CF-LLC/InvoiceForge',
     live: 'https://cf-llc.github.io/InvoiceForge/',
-    accent: 'magenta',
   },
   {
     name: "Satoshi's Path",
@@ -82,7 +76,6 @@ const projects: Project[] = [
     proof: 'Live at cf-llc.github.io/satoshis-path. Public repo CF-LLC/satoshis-path.',
     source: 'https://github.com/CF-LLC/satoshis-path',
     live: 'https://cf-llc.github.io/satoshis-path/',
-    accent: 'cyan',
   },
   {
     name: 'ContentCascade',
@@ -95,7 +88,6 @@ const projects: Project[] = [
     stack: 'TypeScript, Next.js, React',
     proof: 'Source is public at CF-LLC/ContentCascade. No separate live homepage is listed on the repository.',
     source: 'https://github.com/CF-LLC/ContentCascade',
-    accent: 'orange',
   },
   {
     name: 'RogueCoin Game',
@@ -109,7 +101,6 @@ const projects: Project[] = [
     proof: 'Live at cf-llc.github.io/RogueCoinGame with source in CF-LLC/RogueCoinGame.',
     source: 'https://github.com/CF-LLC/RogueCoinGame',
     live: 'https://cf-llc.github.io/RogueCoinGame/',
-    accent: 'magenta',
   },
   {
     name: 'Passive Income Tracker',
@@ -123,61 +114,45 @@ const projects: Project[] = [
     proof: 'Live at cf-llc.github.io/passive-income-tracker. Public source in CF-LLC/passive-income-tracker.',
     source: 'https://github.com/CF-LLC/passive-income-tracker',
     live: 'https://cf-llc.github.io/passive-income-tracker/',
-    accent: 'cyan',
   },
 ]
 
-const accentBorder = {
-  magenta: 'border-pink-400/25 hover:border-pink-300/50',
-  cyan: 'border-cyan-300/25 hover:border-cyan-200/50',
-  orange: 'border-orange-400/25 hover:border-orange-300/50',
-}
-
 export default function ProjectsSection() {
   return (
-    <section className="relative" style={{ transformStyle: 'preserve-3d' }}>
-      <div className="mb-10 max-w-3xl">
-        <p className="kicker">Selected work</p>
-        <h2 className="display-title mt-4 text-4xl text-white sm:text-6xl">Products, not homework.</h2>
-        <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
+    <section className="relative">
+      <div className="mb-16 max-w-2xl">
+        <p className="kicker">03 — Selected work</p>
+        <h2 className="display-title mt-6 text-4xl text-white sm:text-6xl">Products, not homework.</h2>
+        <p className="mt-6 text-lg leading-8 text-white/55">
           Each build below is real source or a live deploy. Proof is limited to what the repo or live site actually shows.
         </p>
       </div>
 
-      <div className="grid gap-6">
+      <div>
         {projects.map((project, index) => (
-          <motion.article
-            key={project.name}
-            initial={{ opacity: 0, y: 70, rotateX: 12, rotateY: index % 2 === 0 ? -14 : 14, z: -180 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0, z: 0 }}
-            whileHover={{ z: 40, rotateX: -3, rotateY: index % 2 === 0 ? 4 : -4, y: -8 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.55, delay: Math.min(index * 0.04, 0.2) }}
-            className={`glass rounded-[2rem] border p-6 sm:p-8 ${accentBorder[project.accent]}`}
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <article key={project.name} className="border-t border-white/10 py-12 last:border-b">
+            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
               <div>
-                <p className="kicker">0{index + 1}</p>
-                <h3 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">{project.name}</h3>
-                <p className="mt-4 text-base leading-7 text-white/75">{project.value}</p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a href={project.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/10">
+                <p className="kicker">{String(index + 1).padStart(2, '0')}</p>
+                <h3 className="display-title mt-4 text-3xl text-white sm:text-5xl">{project.name}</h3>
+                <p className="mt-5 text-base leading-7 text-white/60">{project.value}</p>
+                <div className="mt-7 flex flex-wrap gap-6 text-sm">
+                  <a href={project.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white/70 hover:text-white">
                     <Github className="h-4 w-4" />
                     Source
                   </a>
                   {project.live && (
-                    <a href={project.live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950">
+                    <a href={project.live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white/70 hover:text-white">
                       <ExternalLink className="h-4 w-4" />
                       Live
                     </a>
                   )}
                 </div>
               </div>
-              <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              <div className="grid gap-8 sm:grid-cols-3">
                 <div>
                   <p className="kicker">Features</p>
-                  <ul className="mt-3 space-y-2 text-sm leading-6 text-white/75">
+                  <ul className="mt-4 space-y-2 text-sm leading-6 text-white/55">
                     {project.features.map((feature) => (
                       <li key={feature}>{feature}</li>
                     ))}
@@ -185,15 +160,15 @@ export default function ProjectsSection() {
                 </div>
                 <div>
                   <p className="kicker">Tech</p>
-                  <p className="mt-3 text-sm leading-6 text-white/75">{project.stack}</p>
+                  <p className="mt-4 text-sm leading-6 text-white/55">{project.stack}</p>
                 </div>
                 <div>
                   <p className="kicker">Proof</p>
-                  <p className="mt-3 text-sm leading-6 text-white/75">{project.proof}</p>
+                  <p className="mt-4 text-sm leading-6 text-white/55">{project.proof}</p>
                 </div>
               </div>
             </div>
-          </motion.article>
+          </article>
         ))}
       </div>
     </section>
