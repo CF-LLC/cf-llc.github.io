@@ -45,6 +45,23 @@ h6 {
 .site-shell {
   position: relative;
   isolation: isolate;
+  perspective: 1400px;
+}
+
+.space-rig {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.spatial-scene {
+  position: relative;
+  isolation: isolate;
+  transform-style: preserve-3d;
+}
+
+.spatial-scene-inner {
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .display-title {
@@ -76,6 +93,7 @@ h6 {
   inset: 0;
   z-index: -1;
   opacity: 0.92;
+  transform: translateZ(-40px) scale(1.04);
 }
 
 .panel-magenta::before {
@@ -129,5 +147,10 @@ h6 {
   .orb-glow,
   .animated-gradient {
     animation: none !important;
+  }
+
+  .space-rig,
+  .spatial-scene-inner {
+    transform: none !important;
   }
 }

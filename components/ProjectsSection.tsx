@@ -135,7 +135,7 @@ const accentBorder = {
 
 export default function ProjectsSection() {
   return (
-    <section className="relative">
+    <section className="relative" style={{ transformStyle: 'preserve-3d' }}>
       <div className="mb-10 max-w-3xl">
         <p className="kicker">Selected work</p>
         <h2 className="display-title mt-4 text-4xl text-white sm:text-6xl">Products, not homework.</h2>
@@ -148,11 +148,13 @@ export default function ProjectsSection() {
         {projects.map((project, index) => (
           <motion.article
             key={project.name}
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 70, rotateX: 12, rotateY: index % 2 === 0 ? -14 : 14, z: -180 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0, z: 0 }}
+            whileHover={{ z: 40, rotateX: -3, rotateY: index % 2 === 0 ? 4 : -4, y: -8 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.2) }}
+            transition={{ duration: 0.55, delay: Math.min(index * 0.04, 0.2) }}
             className={`glass rounded-[2rem] border p-6 sm:p-8 ${accentBorder[project.accent]}`}
+            style={{ transformStyle: 'preserve-3d' }}
           >
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
               <div>
@@ -160,29 +162,18 @@ export default function ProjectsSection() {
                 <h3 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">{project.name}</h3>
                 <p className="mt-4 text-base leading-7 text-white/75">{project.value}</p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href={project.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/10"
-                  >
+                  <a href={project.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/10">
                     <Github className="h-4 w-4" />
                     Source
                   </a>
                   {project.live && (
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950"
-                    >
+                    <a href={project.live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950">
                       <ExternalLink className="h-4 w-4" />
                       Live
                     </a>
                   )}
                 </div>
               </div>
-
               <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                 <div>
                   <p className="kicker">Features</p>
