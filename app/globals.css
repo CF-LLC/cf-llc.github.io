@@ -45,23 +45,6 @@ h6 {
 .site-shell {
   position: relative;
   isolation: isolate;
-  perspective: 1400px;
-}
-
-.space-rig {
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.spatial-scene {
-  position: relative;
-  isolation: isolate;
-  transform-style: preserve-3d;
-}
-
-.spatial-scene-inner {
-  transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .display-title {
@@ -93,7 +76,6 @@ h6 {
   inset: 0;
   z-index: -1;
   opacity: 0.92;
-  transform: translateZ(-40px) scale(1.04);
 }
 
 .panel-magenta::before {
@@ -120,37 +102,8 @@ h6 {
     linear-gradient(180deg, #05060a 0%, #0b1020 100%);
 }
 
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(12px, -18px, 0) scale(1.06); }
-}
-
-.orb-ring {
-  animation: spin-slow 28s linear infinite;
-}
-
-.orb-glow {
-  animation: drift 8s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  .orb-ring,
-  .orb-glow,
-  .animated-gradient {
-    animation: none !important;
-  }
-
-  .space-rig,
-  .spatial-scene-inner {
-    transform: none !important;
   }
 }
