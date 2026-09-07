@@ -17,57 +17,33 @@ uniform float u_scroll;
 uniform vec2 u_mouse;
 uniform float u_reduce;
 
-float hash(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-}
-
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  float a = hash(i);
-  float b = hash(i + vec2(1.0, 0.0));
-  float c = hash(i + vec2(0.0, 1.0));
-  float d = hash(i + vec2(1.0, 1.0));
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-}
-
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
   float t = u_time * (1.0 - u_reduce * 0.9);
   float s = clamp(u_scroll, 0.0, 1.0);
-  vec2 m = u_mouse * 0.06;
+  vec2 m = u_mouse * 0.05;
+  float mobile = step(u_res.x / max(u_res.y, 1.0), 0.78);
 
   vec3 wine = vec3(0.77, 0.23, 0.45);
   vec3 teal = vec3(0.29, 0.66, 0.72);
   vec3 rust = vec3(0.77, 0.42, 0.17);
-  vec3 ink = vec3(0.027, 0.027, 0.031);
+  vec3 ink = vec3(0.05, 0.055, 0.06);
 
   vec3 accent = mix(teal, wine, smoothstep(0.08, 0.36, s));
   accent = mix(accent, rust, smoothstep(0.55, 0.82, s));
 
-  vec2 center = vec2(0.58 + m.x, 0.06 + m.y + sin(t * 0.15) * 0.02);
+  vec2 center = mix(vec2(0.52 + m.x, 0.04 + m.y), vec2(0.02, 0.08), mobile);
+  center.y += sin(t * 0.12) * 0.015;
   float dist = length(uv - center);
-  float orb = 0.012 / (dist + 0.028);
-  float halo = exp(-dist * 3.4) * 0.38;
-  float ring = smoothstep(0.22, 0.16, dist) * smoothstep(0.10, 0.18, dist) * 0.22;
-
-  float grain = noise(uv * 3.2 + t * 0.03) * 0.07;
-  float dust = 0.0;
-  for (int i = 0; i < 3; i++) {
-    float fi = float(i);
-    vec2 sp = uv * (10.0 + fi * 7.0) + vec2(t * 0.015, fi * 4.0);
-    dust += step(0.996, hash(floor(sp))) * 0.18;
-  }
+  float orb = 0.014 / (dist + 0.03);
+  float halo = exp(-dist * mix(3.2, 1.55, mobile)) * mix(0.4, 0.62, mobile);
+  float wash = exp(-length(uv * vec2(1.05, mix(1.0, 0.72, mobile))) * mix(1.4, 0.62, mobile));
 
   vec3 col = ink;
-  col += accent * (orb * 0.55 + halo + ring);
-  col += accent * grain;
-  col += vec3(0.92, 0.9, 0.86) * dust * 0.25;
-  col += accent * exp(-length(uv * vec2(1.15, 1.0)) * 1.55) * 0.08;
+  col += accent * (orb * 0.5 + halo + wash * mix(0.1, 0.28, mobile));
 
-  float vig = smoothstep(1.45, 0.32, length(uv));
-  col *= vig;
+  float vig = smoothstep(1.55, 0.22, length(uv));
+  col *= mix(vig, 0.88 + 0.12 * vig, mobile);
   gl_FragColor = vec4(col, 1.0);
 }
 `
@@ -125,12 +101,21 @@ export default function SceneCanvas() {
     let targetX = 0
     let targetY = 0
 
+    const viewport = () => {
+      const view = window.visualViewport
+      return {
+        w: Math.floor(view?.width ?? window.innerWidth),
+        h: Math.floor(view?.height ?? window.innerHeight),
+      }
+    }
+
     const resize = () => {
+      const { w, h } = viewport()
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.floor(window.innerWidth * dpr)
-      canvas.height = Math.floor(window.innerHeight * dpr)
-      canvas.style.width = `${window.innerWidth}px`
-      canvas.style.height = `${window.innerHeight}px`
+      canvas.width = Math.floor(w * dpr)
+      canvas.height = Math.floor(h * dpr)
+      canvas.style.width = `${w}px`
+      canvas.style.height = `${h}px`
       gl.viewport(0, 0, canvas.width, canvas.height)
     }
 
@@ -155,13 +140,15 @@ export default function SceneCanvas() {
     resize()
     raf = window.requestAnimationFrame(draw)
     window.addEventListener('resize', resize)
+    window.visualViewport?.addEventListener('resize', resize)
     window.addEventListener('mousemove', onMove)
     return () => {
       window.cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
+      window.visualViewport?.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-0 h-full w-full" aria-hidden="true" />
 }
