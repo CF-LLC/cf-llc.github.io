@@ -32,76 +32,42 @@ float noise(vec2 p) {
   return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
-mat2 rot(float a) {
-  float c = cos(a);
-  float s = sin(a);
-  return mat2(c, -s, s, c);
-}
-
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
   float t = u_time * (1.0 - u_reduce * 0.9);
   float s = clamp(u_scroll, 0.0, 1.0);
-  vec2 m = u_mouse * 0.22;
+  vec2 m = u_mouse * 0.06;
 
-  vec3 magenta = vec3(1.0, 0.18, 0.54);
-  vec3 cyan = vec3(0.18, 0.90, 1.0);
-  vec3 orange = vec3(1.0, 0.48, 0.09);
-  vec3 ink = vec3(0.015, 0.018, 0.03);
+  vec3 wine = vec3(0.77, 0.23, 0.45);
+  vec3 teal = vec3(0.29, 0.66, 0.72);
+  vec3 rust = vec3(0.77, 0.42, 0.17);
+  vec3 ink = vec3(0.027, 0.027, 0.031);
 
-  vec3 accent = mix(cyan, magenta, smoothstep(0.04, 0.34, s));
-  accent = mix(accent, orange, smoothstep(0.5, 0.8, s));
+  vec3 accent = mix(teal, wine, smoothstep(0.08, 0.36, s));
+  accent = mix(accent, rust, smoothstep(0.55, 0.82, s));
 
-  vec2 p = uv;
-  p.x += m.x;
-  p.y += m.y;
-  p *= rot(s * 0.55 + t * 0.05);
-  p.y += s * 0.18;
+  vec2 center = vec2(0.58 + m.x, 0.06 + m.y + sin(t * 0.15) * 0.02);
+  float dist = length(uv - center);
+  float orb = 0.012 / (dist + 0.028);
+  float halo = exp(-dist * 3.4) * 0.38;
+  float ring = smoothstep(0.22, 0.16, dist) * smoothstep(0.10, 0.18, dist) * 0.22;
 
-  vec2 center = vec2(0.38 - s * 0.42, 0.02 + sin(s * 6.283) * 0.12);
-  float orb = 0.016 / (length(p - center) + 0.01);
-  float halo = exp(-length(p - center) * 2.6) * 0.72;
-  float ring = smoothstep(0.28, 0.2, length(p - center)) * smoothstep(0.14, 0.22, length(p - center));
-
-  float field = 0.0;
-  for (int i = 0; i < 18; i++) {
+  float grain = noise(uv * 3.2 + t * 0.03) * 0.07;
+  float dust = 0.0;
+  for (int i = 0; i < 3; i++) {
     float fi = float(i);
-    float ang = fi * 0.35 + t * 0.31 + s * 4.0;
-    float rad = 0.16 + 0.08 * sin(fi + t);
-    vec3 q = vec3(cos(ang) * rad, sin(ang * 1.3) * rad * 0.72, sin(ang * 0.7) * rad);
-    q.xy *= rot(t * 0.2 + s);
-    q.xz *= rot(s * 1.4);
-    vec2 proj = q.xy / (1.35 + q.z);
-    float d = length(p - center - proj);
-    field += 0.012 / (d + 0.012);
+    vec2 sp = uv * (10.0 + fi * 7.0) + vec2(t * 0.015, fi * 4.0);
+    dust += step(0.996, hash(floor(sp))) * 0.18;
   }
 
-  vec2 gridUv = p * 7.0;
-  gridUv.y += s * 4.0;
-  vec2 gv = abs(fract(gridUv) - 0.5);
-  float grid = smoothstep(0.46, 0.5, max(gv.x, gv.y)) * 0.16 * (1.0 - s * 0.4);
-
-  float stars = 0.0;
-  for (int i = 0; i < 4; i++) {
-    float fi = float(i);
-    vec2 sp = uv * (16.0 + fi * 9.0);
-    sp *= rot(0.08 * fi + s * 0.2);
-    sp += vec2(t * (0.03 + fi * 0.01), fi * 7.0);
-    float n = hash(floor(sp));
-    stars += step(0.993 - fi * 0.003, n) * (0.32 - fi * 0.05);
-  }
-
-  float mist = noise(p * 2.2 + t * 0.08) * 0.2;
   vec3 col = ink;
-  col += accent * (orb * 0.95 + halo + ring * 0.62 + field * 0.55);
-  col += mix(cyan, magenta, noise(p + t * 0.05)) * mist;
-  col += accent * grid;
-  col += vec3(0.9, 0.95, 1.0) * stars;
-  col += accent * exp(-length(uv) * 1.15) * 0.16;
+  col += accent * (orb * 0.55 + halo + ring);
+  col += accent * grain;
+  col += vec3(0.92, 0.9, 0.86) * dust * 0.25;
+  col += accent * exp(-length(uv * vec2(1.15, 1.0)) * 1.55) * 0.08;
 
-  float vig = smoothstep(1.4, 0.28, length(uv));
+  float vig = smoothstep(1.45, 0.32, length(uv));
   col *= vig;
-  col = pow(max(col, 0.0), vec3(0.9));
   gl_FragColor = vec4(col, 1.0);
 }
 `
@@ -160,7 +126,7 @@ export default function SceneCanvas() {
     let targetY = 0
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.6)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.floor(window.innerWidth * dpr)
       canvas.height = Math.floor(window.innerHeight * dpr)
       canvas.style.width = `${window.innerWidth}px`
@@ -174,8 +140,8 @@ export default function SceneCanvas() {
     }
 
     const draw = (now: number) => {
-      mouseX += (targetX - mouseX) * 0.06
-      mouseY += (targetY - mouseY) * 0.06
+      mouseX += (targetX - mouseX) * 0.04
+      mouseY += (targetY - mouseY) * 0.04
       const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
       gl.uniform2f(uRes, canvas.width, canvas.height)
       gl.uniform1f(uTime, (now - start) / 1000)

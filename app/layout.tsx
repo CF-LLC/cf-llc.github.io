@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Manrope, Sora } from 'next/font/google'
+import { Instrument_Serif, Inter } from 'next/font/google'
 
-const sora = Sora({
+const display = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-heading'
+  weight: '400',
+  variable: '--font-heading',
 })
 
-const manrope = Manrope({
+const body = Inter({
   subsets: ['latin'],
-  variable: '--font-body'
+  variable: '--font-body',
 })
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6809503981674593"
           crossOrigin="anonymous"></script>
