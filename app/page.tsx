@@ -2,9 +2,7 @@
 
 import React from 'react'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ArrowRight, Mail } from 'lucide-react'
 import LoadingAnimation from '@/components/LoadingAnimation'
 import ProjectsSection from '@/components/ProjectsSection'
 import ContactInfo from '@/components/ContactInfo'
@@ -33,77 +31,69 @@ const founderPoints = [
 
 export default function Home() {
   return (
-    <div className="site-shell min-h-screen text-white">
+    <div className="site-shell min-h-screen text-[#eceae4]">
       <ScrollBackground />
       <SceneCanvas />
 
       <div id="page-top" className="relative z-10">
-        <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
-          <a href="#page-top" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-1 ring-white/20">
-              <Image src="/favicon.ico" alt="CF LLC logo" width={28} height={28} />
-            </div>
-            <div>
-              <p className="text-[0.68rem] uppercase tracking-[0.32em] text-white/55">Cooper Featherstone LLC</p>
-              <p className="text-sm font-semibold">Founder & Full-Stack Developer</p>
-            </div>
+        <header className="mx-auto flex max-w-6xl items-baseline justify-between px-5 py-8 sm:px-8">
+          <a href="#page-top" className="text-sm tracking-[0.18em] text-white/70">
+            CF LLC
           </a>
-          <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex">
+          <nav className="flex items-center gap-7 text-[0.8rem] tracking-[0.16em] text-white/45">
             <a href="#work" className="hover:text-white">Work</a>
             <a href="#founder" className="hover:text-white">Founder</a>
             <a href="#contact" className="hover:text-white">Contact</a>
           </nav>
         </header>
 
-        <section className="relative mx-auto flex min-h-[88vh] max-w-7xl flex-col justify-center px-4 pb-24 pt-8 sm:px-6 lg:px-8">
-          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="kicker">
+        <section className="relative mx-auto flex min-h-[86vh] max-w-6xl flex-col justify-center px-5 pb-28 pt-10 sm:px-8">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="kicker">
             Cooper Featherstone
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="display-title mt-6 max-w-5xl text-5xl text-white sm:text-7xl lg:text-8xl"
+            transition={{ delay: 0.06, duration: 0.7 }}
+            className="display-title mt-8 max-w-4xl text-[3.1rem] sm:text-7xl lg:text-[5.6rem]"
           >
             Full-Stack Developer building production-ready web applications
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 }}
-            className="mt-8 max-w-2xl text-lg leading-8 text-white/72 sm:text-xl"
+            transition={{ delay: 0.14, duration: 0.7 }}
+            className="mt-10 max-w-xl text-[1.05rem] leading-8 text-white/58"
           >
             I build real-world applications with authentication, APIs, and modern frameworks like React and Next.js — focused on usability, performance, and business impact.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
-            className="mt-10 flex flex-col gap-4 sm:flex-row"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.22 }}
+            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm"
           >
-            <a href="#work" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-base font-semibold text-slate-950">
-              See the work
-              <ArrowRight className="h-4 w-4" />
+            <a href="#work" className="border-b border-white/30 pb-1 text-white hover:border-white">
+              Selected work
             </a>
-            <a href="mailto:cooperfeatherstonellc@gmail.com" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 text-base text-white">
-              <Mail className="h-4 w-4" />
+            <a href="mailto:cooperfeatherstonellc@gmail.com" className="text-white/50 hover:text-white">
               cooperfeatherstonellc@gmail.com
             </a>
           </motion.div>
         </section>
 
         <section id="founder" className="color-panel panel-magenta scroll-mt-24">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8 lg:py-32">
+          <div className="mx-auto grid max-w-6xl gap-16 px-5 py-28 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-36">
             <div>
-              <p className="kicker">Cooper Featherstone LLC</p>
-              <h2 className="display-title mt-4 text-4xl sm:text-6xl">Founder & Full-Stack Developer</h2>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-white/80">
-                Early-stage product engineer who ships production work. Not a student portfolio. Not a generic agency wrapper.
+              <p className="kicker">01 — Cooper Featherstone LLC</p>
+              <h2 className="display-title mt-6 text-4xl sm:text-6xl">Founder & Full-Stack Developer</h2>
+              <p className="mt-8 max-w-md text-lg leading-8 text-white/60">
+                Early-stage product engineer who ships production work.
               </p>
             </div>
-            <ul className="space-y-5 text-lg leading-8 text-white/90">
+            <ul className="space-y-0 text-[1.05rem] leading-8 text-white/80">
               {founderPoints.map((point) => (
-                <li key={point} className="border-b border-white/15 pb-5">
+                <li key={point} className="border-t border-white/10 py-5 last:border-b">
                   {point}
                 </li>
               ))}
@@ -112,10 +102,10 @@ export default function Home() {
         </section>
 
         <section id="signals" className="color-panel panel-cyan">
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-            <p className="kicker">What I have built</p>
-            <h2 className="display-title mt-4 max-w-4xl text-4xl sm:text-6xl">Production signals, not vibes.</h2>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mx-auto max-w-6xl px-5 py-28 sm:px-8 lg:py-36">
+            <p className="kicker">02 — Practice</p>
+            <h2 className="display-title mt-6 max-w-3xl text-4xl sm:text-6xl">Production signals, not vibes.</h2>
+            <div className="mt-16 grid gap-0 border-t border-white/10 md:grid-cols-3">
               {[
                 {
                   title: 'Full-stack apps deployed',
@@ -130,9 +120,9 @@ export default function Home() {
                   body: 'App Router API routes for funnels, billing, AI generation, and CRUD — visible in the public repositories.',
                 },
               ].map((item) => (
-                <div key={item.title} className="rounded-[1.75rem] border border-white/15 bg-black/20 p-6">
-                  <h3 className="text-2xl font-semibold">{item.title}</h3>
-                  <p className="mt-3 text-base leading-7 text-white/75">{item.body}</p>
+                <div key={item.title} className="border-white/10 py-8 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
+                  <h3 className="font-sans text-lg font-medium tracking-tight">{item.title}</h3>
+                  <p className="mt-4 text-[0.95rem] leading-7 text-white/55">{item.body}</p>
                 </div>
               ))}
             </div>
@@ -140,59 +130,58 @@ export default function Home() {
         </section>
 
         <section id="work" className="color-panel panel-ink scroll-mt-24">
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-28">
+          <div className="mx-auto max-w-6xl px-5 py-28 sm:px-8 lg:py-36">
             <ProjectsSection />
           </div>
         </section>
 
         <section className="color-panel panel-orange">
-          <div className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-            <p className="kicker">About</p>
-            <h2 className="display-title mt-4 text-4xl sm:text-6xl">I ship usable software.</h2>
-            <p className="mt-6 text-lg leading-8 text-white/85">
+          <div className="mx-auto max-w-3xl px-5 py-28 sm:px-8 lg:py-36">
+            <p className="kicker">04 — About</p>
+            <h2 className="display-title mt-6 text-4xl sm:text-6xl">I ship usable software.</h2>
+            <p className="mt-8 text-lg leading-8 text-white/62">
               I focus on building real-world applications that solve practical problems. Most of my work centers around full-stack development using React and modern backend tools, with an emphasis on performance, usability, and clean design.
             </p>
-            <p className="mt-6 text-lg leading-8 text-white/85">
+            <p className="mt-6 text-lg leading-8 text-white/62">
               Internships at JB Hunt and Walmart sit behind the work. The public repos are the proof: auth, APIs, dashboards, and deployed apps.
             </p>
           </div>
         </section>
 
-        <div id="contact" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
+        <div id="contact" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-24 sm:px-8">
           <ContactInfo />
         </div>
 
-        <section id="play" className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-          <div className="glass rounded-[2rem] p-6 sm:p-8">
-            <div className="mb-8 text-center">
-              <p className="kicker">Extras</p>
-              <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Quick interaction studies</h2>
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-                <h3 className="mb-4 text-center text-xl font-semibold">Easy</h3>
-                <div className="rounded-[1.25rem] bg-[#d8efff] p-4 text-slate-900">
+        <footer className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
+          <details className="border-t border-white/10 pt-8">
+            <summary className="cursor-pointer list-none text-sm tracking-[0.18em] text-white/35">
+              Interaction studies
+            </summary>
+            <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              <div className="rounded-md border border-white/10 p-4">
+                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">EASY</p>
+                <div className="bg-[#eceae4] p-3 text-slate-900">
                   <TicTacToe />
                 </div>
               </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-                <h3 className="mb-4 text-center text-xl font-semibold">Normal</h3>
-                <div className="flex justify-center rounded-[1.25rem] bg-[#d8efff] p-4 text-slate-900">
+              <div className="rounded-md border border-white/10 p-4">
+                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">NORMAL</p>
+                <div className="flex justify-center bg-[#eceae4] p-3 text-slate-900">
                   <LogoSlider />
                 </div>
               </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 md:col-span-2 xl:col-span-1">
-                <h3 className="mb-4 text-center text-xl font-semibold">Hard</h3>
-                <div className="rounded-[1.25rem] bg-[#d8efff] p-4 text-slate-900">
+              <div className="rounded-md border border-white/10 p-4 md:col-span-2 xl:col-span-1">
+                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">HARD</p>
+                <div className="bg-[#eceae4] p-3 text-slate-900">
                   <Othello />
                 </div>
               </div>
             </div>
-            <div className="mt-8 border-t border-white/10 pt-6 text-center text-sm text-white/50">
-              © {new Date().getFullYear()} Cooper Featherstone LLC
-            </div>
-          </div>
-        </section>
+          </details>
+          <p className="mt-10 text-xs tracking-[0.16em] text-white/30">
+            © {new Date().getFullYear()} Cooper Featherstone LLC
+          </p>
+        </footer>
       </div>
     </div>
   )
