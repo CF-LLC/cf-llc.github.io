@@ -1,188 +1,169 @@
-'use client'
-
-import React from 'react'
-import dynamic from 'next/dynamic'
-import { motion } from 'framer-motion'
-import LoadingAnimation from '@/components/LoadingAnimation'
 import ProjectsSection from '@/components/ProjectsSection'
-import ContactInfo from '@/components/ContactInfo'
-import ScrollBackground from '@/components/ScrollBackground'
-import SceneCanvas from '@/components/SceneCanvas'
+import SampleMockups from '@/components/SampleMockups'
+import MockupForm from '@/components/MockupForm'
 
-const TicTacToe = dynamic(() => import('@/components/TicTacToe'), {
-  loading: () => <LoadingAnimation />,
-  ssr: false,
-})
-const LogoSlider = dynamic(() => import('@/components/LogoSlider'), {
-  loading: () => <LoadingAnimation />,
-  ssr: false,
-})
-const Othello = dynamic(() => import('@/components/Othello'), {
-  loading: () => <LoadingAnimation />,
-  ssr: false,
-})
+// Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
+// Links: live Stripe payment links from agent-payment-links.md. No untagged set exists,
+// so these are the rep-gptoss links.
+const packages = [
+  {
+    name: 'Starter Site',
+    price: '$499',
+    priceNote: 'setup + $39/mo',
+    blurb: 'A 1–3 page mobile site with a contact form. Hosting and updates included in the monthly fee.',
+    items: ['1–3 pages', 'Mobile-first design', 'Contact form', 'Hosting & updates'],
+    href: 'https://buy.stripe.com/14AbJ1dUM5K96M2fEr4c800',
+    featured: true,
+  },
+  {
+    name: 'Pro Site',
+    price: '$1,200',
+    priceNote: 'setup + $59/mo',
+    blurb: 'More room for a growing business: booking, menu or gallery pages, plus basic SEO.',
+    items: ['Up to 8 pages', 'Booking, menu or gallery', 'Basic SEO', '2 revision rounds'],
+    href: 'https://buy.stripe.com/00w28r5og8Wl9Yeak74c801',
+    featured: false,
+  },
+  {
+    name: 'Site Care',
+    price: '$49',
+    priceNote: 'per month',
+    blurb: 'Already have a site? I keep it updated and watched.',
+    items: ['Updates', 'Uptime checks', 'Monthly report', 'For an existing site'],
+    href: 'https://buy.stripe.com/7sY4gzg2Uc8xdaq2RF4c802',
+    featured: false,
+  },
+]
 
-const founderPoints = [
-  'Built and launched production web apps and SaaS-style products (React, Next.js, APIs)',
-  'Client work end-to-end: UI/UX, backend integration, deploy',
-  'Auth, dynamic data, responsive UI',
-  'Full product lifecycle, concept to production',
+const steps = [
+  { t: 'Mockup', b: 'Send your business name and current site. I make a free homepage mockup so you can see the direction first.' },
+  { t: 'Approve', b: 'Request changes or approve it. You only pay when you choose a package.' },
+  { t: 'Launch', b: 'I build the site and put it live, then keep it running on your plan.' },
+]
+
+const faqs = [
+  { q: 'Where is my site hosted?', a: 'Starter Site and Pro Site include hosting in the monthly fee, so there is nothing extra to set up. If you already have a site and host, Site Care covers updates and uptime checks for it.' },
+  { q: 'Can I make edits later?', a: 'Yes. Starter Site includes updates as part of the monthly fee: email me what you want changed. Pro Site includes 2 revision rounds during the build, and updates after launch are covered by the monthly fee.' },
+  { q: 'How long does it take?', a: 'A Starter Site is typically live within about a week of approving your mockup, as long as I have your text and photos. Pro Sites take longer depending on pages and features; I will give you an estimate up front.' },
+  { q: 'Do I need to be local?', a: 'No. Everything is done remotely by email, for small businesses anywhere in the US.' },
+  { q: 'Is the mockup really free?', a: 'Yes. No payment or commitment to get a homepage mockup.' },
 ]
 
 export default function Home() {
   return (
-    <div className="site-shell min-h-screen text-[#eceae4]">
-      <ScrollBackground />
-      <SceneCanvas />
+    <div className="min-h-screen text-[#eceae4]">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black">Skip to content</a>
+      <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8">
+        <a href="#main" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
+        <nav aria-label="Main" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
+          <a href="#packages" className="hover:text-white">Packages</a>
+          <a href="#samples" className="hover:text-white">Samples</a>
+          <a href="#faq" className="hover:text-white">FAQ</a>
+          <a href="#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>
+        </nav>
+      </header>
 
-      <div id="page-top" className="relative z-10">
-        <header className="mx-auto flex max-w-6xl items-baseline justify-between px-5 py-8 sm:px-8">
-          <a href="#page-top" className="text-sm tracking-[0.18em] text-white/70">
-            CF LLC
-          </a>
-          <nav className="flex items-center gap-7 text-[0.8rem] tracking-[0.16em] text-white/45">
-            <a href="#work" className="hover:text-white">Work</a>
-            <a href="#founder" className="hover:text-white">Founder</a>
-            <a href="#contact" className="hover:text-white">Contact</a>
-          </nav>
-        </header>
-
-        <section className="relative mx-auto flex min-h-[86vh] max-w-6xl flex-col justify-center px-5 pb-28 pt-10 sm:px-8">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="kicker">
-            Cooper Featherstone
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.06, duration: 0.7 }}
-            className="display-title mt-8 max-w-4xl text-[3.1rem] sm:text-7xl lg:text-[5.6rem]"
-          >
-            Full-Stack Developer building production-ready web applications
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14, duration: 0.7 }}
-            className="mt-10 max-w-xl text-[1.05rem] leading-8 text-white/58"
-          >
-            I build real-world applications with authentication, APIs, and modern frameworks like React and Next.js — focused on usability, performance, and business impact.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.22 }}
-            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm"
-          >
-            <a href="#work" className="border-b border-white/30 pb-1 text-white hover:border-white">
-              Selected work
-            </a>
-            <a href="mailto:cooperfeatherstonellc@gmail.com" className="text-white/50 hover:text-white">
-              cooperfeatherstonellc@gmail.com
-            </a>
-          </motion.div>
+      <main id="main">
+        <section aria-labelledby="hero-title" className="mx-auto max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pt-16">
+          <p className="kicker">Web services for small businesses · Remote, US-wide</p>
+          <h1 id="hero-title" className="display-title mt-6 max-w-4xl text-5xl text-white sm:text-7xl">Websites for small businesses, live in a week.</h1>
+          <p className="mt-6 max-w-xl text-lg leading-8 text-white/80">
+            A clean, mobile-friendly site that tells customers what you do and how to reach you. Starter Sites from $499 setup + $39/mo, hosting and updates included.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a href="#mockup" className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white">Get a free homepage mockup</a>
+            <a href="#packages" className="rounded-md border border-white/50 px-6 py-3 font-semibold text-white hover:border-white">See packages</a>
+          </div>
         </section>
 
-        <section id="founder" className="color-panel panel-magenta scroll-mt-24">
-          <div className="mx-auto grid max-w-6xl gap-16 px-5 py-28 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-36">
-            <div>
-              <p className="kicker">01 — Cooper Featherstone LLC</p>
-              <h2 className="display-title mt-6 text-4xl sm:text-6xl">Founder & Full-Stack Developer</h2>
-              <p className="mt-8 max-w-md text-lg leading-8 text-white/60">
-                Early-stage product engineer who ships production work.
-              </p>
-            </div>
-            <ul className="space-y-0 text-[1.05rem] leading-8 text-white/80">
-              {founderPoints.map((point) => (
-                <li key={point} className="border-t border-white/10 py-5 last:border-b">
-                  {point}
+        <section id="packages" aria-labelledby="packages-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+            <p className="kicker">Packages</p>
+            <h2 id="packages-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Simple, upfront pricing</h2>
+            <ul className="mt-10 grid gap-6 md:grid-cols-3">
+              {packages.map((p) => (
+                <li key={p.name} className={`flex flex-col rounded-lg border p-6 ${p.featured ? 'border-[#4aa8b8] bg-[#4aa8b8]/10' : 'border-white/15 bg-white/[0.03]'}`}>
+                  <h3 className="text-3xl text-white">{p.name}</h3>
+                  {p.featured && <p className="mt-1 text-sm font-semibold text-[#8fd3de]">Most popular</p>}
+                  <p className="mt-4"><span className="text-4xl font-semibold text-white">{p.price}</span> <span className="text-white/80">{p.priceNote}</span></p>
+                  <p className="mt-4 leading-7 text-white/80">{p.blurb}</p>
+                  <ul className="mt-4 flex-1 list-disc space-y-1 pl-5 text-white/80">
+                    {p.items.map((i) => <li key={i}>{i}</li>)}
+                  </ul>
+                  <a href={p.href} className="mt-6 rounded-md bg-[#eceae4] px-5 py-3 text-center font-semibold text-[#070708] hover:bg-white">
+                    Buy {p.name}<span className="sr-only"> (secure checkout on Stripe)</span>
+                  </a>
                 </li>
               ))}
             </ul>
+            <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#mockup" className="underline">Start with a free mockup.</a></p>
           </div>
         </section>
 
-        <section id="signals" className="color-panel panel-cyan">
-          <div className="mx-auto max-w-6xl px-5 py-28 sm:px-8 lg:py-36">
-            <p className="kicker">02 — Practice</p>
-            <h2 className="display-title mt-6 max-w-3xl text-4xl sm:text-6xl">Production signals, not vibes.</h2>
-            <div className="mt-16 grid gap-0 border-t border-white/10 md:grid-cols-3">
-              {[
-                {
-                  title: 'Full-stack apps deployed',
-                  body: 'Public deploys on GitHub Pages and Vercel, including Funnel Maker, Daily Methods Hub, InvoiceForge, and more.',
-                },
-                {
-                  title: 'Authentication + database',
-                  body: 'Supabase auth and Postgres-backed product flows in Funnel Maker and Daily Methods Hub. Access-gated dashboard path in IG Command Center.',
-                },
-                {
-                  title: 'API-driven products',
-                  body: 'App Router API routes for funnels, billing, AI generation, and CRUD — visible in the public repositories.',
-                },
-              ].map((item) => (
-                <div key={item.title} className="border-white/10 py-8 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
-                  <h3 className="font-sans text-lg font-medium tracking-tight">{item.title}</h3>
-                  <p className="mt-4 text-[0.95rem] leading-7 text-white/55">{item.body}</p>
-                </div>
+        <section id="process" aria-labelledby="process-title" className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+          <p className="kicker">How it works</p>
+          <h2 id="process-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Mockup, approve, launch</h2>
+          <ol className="mt-10 grid gap-6 md:grid-cols-3">
+            {steps.map((s, i) => (
+              <li key={s.t} className="rounded-lg border border-white/15 p-6">
+                <p className="text-sm font-semibold text-[#8fd3de]">Step {i + 1}</p>
+                <h3 className="mt-2 text-2xl text-white">{s.t}</h3>
+                <p className="mt-3 leading-7 text-white/80">{s.b}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="samples" aria-labelledby="samples-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+            <p className="kicker">Proof</p>
+            <h2 id="samples-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Before &amp; after samples</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-white/80">Sample homepage mockups for fictional businesses, to show the kind of change you can expect.</p>
+            <SampleMockups />
+            <div className="mt-12 rounded-lg border border-white/15 p-6">
+              <p className="text-sm font-semibold text-[#8fd3de]">Live store</p>
+              <h3 className="mt-2 text-2xl text-white">SpockShop</h3>
+              <p className="mt-2 leading-7 text-white/80">A real online store I built and run, with product listings and an admin for managing items.</p>
+              <a href="https://spockshop.com" className="mt-4 inline-block font-semibold underline underline-offset-4">Visit spockshop.com →</a>
+            </div>
+          </div>
+        </section>
+
+        <section id="mockup" aria-labelledby="mockup-title" className="scroll-mt-6 mx-auto grid max-w-6xl gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2">
+          <div>
+            <p className="kicker">Free, no commitment</p>
+            <h2 id="mockup-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Get a free homepage mockup</h2>
+            <p className="mt-4 leading-7 text-white/80">Tell me your business and current site (if any). I&apos;ll email you a homepage mockup so you can decide with something real in front of you.</p>
+          </div>
+          <MockupForm />
+        </section>
+
+        <section id="faq" aria-labelledby="faq-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+          <div className="mx-auto max-w-3xl px-5 py-20 sm:px-8">
+            <p className="kicker">FAQ</p>
+            <h2 id="faq-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Common questions</h2>
+            <div className="mt-8 divide-y divide-white/15 border-y border-white/15">
+              {faqs.map((f) => (
+                <details key={f.q} className="group py-5">
+                  <summary className="cursor-pointer text-lg font-semibold text-white">{f.q}</summary>
+                  <p className="mt-3 leading-7 text-white/80">{f.a}</p>
+                </details>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="work" className="color-panel panel-ink scroll-mt-24">
-          <div className="mx-auto max-w-6xl px-5 py-28 sm:px-8 lg:py-36">
-            <ProjectsSection />
-          </div>
+        <section id="work" aria-labelledby="work-title" className="scroll-mt-6 mx-auto max-w-6xl px-5 py-20 sm:px-8">
+          <ProjectsSection />
         </section>
+      </main>
 
-        <section className="color-panel panel-orange">
-          <div className="mx-auto max-w-3xl px-5 py-28 sm:px-8 lg:py-36">
-            <p className="kicker">04 — About</p>
-            <h2 className="display-title mt-6 text-4xl sm:text-6xl">I ship usable software.</h2>
-            <p className="mt-8 text-lg leading-8 text-white/62">
-              I focus on building real-world applications that solve practical problems. Most of my work centers around full-stack development using React and modern backend tools, with an emphasis on performance, usability, and clean design.
-            </p>
-            <p className="mt-6 text-lg leading-8 text-white/62">
-              Internships at JB Hunt and Walmart sit behind the work. The public repos are the proof: auth, APIs, dashboards, and deployed apps.
-            </p>
-          </div>
-        </section>
-
-        <div id="contact" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-24 sm:px-8">
-          <ContactInfo />
+      <footer className="border-t border-white/10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
+          <p>CF LLC, 2510 NW Turner Dr, Bentonville, AR 72712</p>
+          <p><a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
         </div>
-
-        <footer className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
-          <details className="border-t border-white/10 pt-8">
-            <summary className="cursor-pointer list-none text-sm tracking-[0.18em] text-white/35">
-              Interaction studies
-            </summary>
-            <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <div className="rounded-md border border-white/10 p-4">
-                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">EASY</p>
-                <div className="bg-[#eceae4] p-3 text-slate-900">
-                  <TicTacToe />
-                </div>
-              </div>
-              <div className="rounded-md border border-white/10 p-4">
-                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">NORMAL</p>
-                <div className="flex justify-center bg-[#eceae4] p-3 text-slate-900">
-                  <LogoSlider />
-                </div>
-              </div>
-              <div className="rounded-md border border-white/10 p-4 md:col-span-2 xl:col-span-1">
-                <p className="mb-3 text-xs tracking-[0.2em] text-white/40">HARD</p>
-                <div className="bg-[#eceae4] p-3 text-slate-900">
-                  <Othello />
-                </div>
-              </div>
-            </div>
-          </details>
-          <p className="mt-10 text-xs tracking-[0.16em] text-white/30">
-            © {new Date().getFullYear()} Cooper Featherstone LLC
-          </p>
-        </footer>
-      </div>
+      </footer>
     </div>
   )
 }

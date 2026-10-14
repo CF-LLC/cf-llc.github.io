@@ -14,8 +14,8 @@ const body = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Cooper Featherstone — Full-Stack Developer',
-  description: 'Full-Stack Developer building production-ready SaaS and web applications with React, Next.js, authentication, and APIs.',
+  title: 'CF LLC — Websites for small businesses, live in a week',
+  description: 'Mobile-friendly websites for small businesses anywhere in the US. Starter Site $499 setup + $39/mo. Get a free homepage mockup.',
   icons: [
     { rel: 'icon', url: '/favicon.ico' },
     { rel: 'apple-touch-icon', sizes: '180x180', url: '/apple-touch-icon.png' },

@@ -1,5 +1,3 @@
-'use client'
-
 import { ExternalLink, Github } from 'lucide-react'
 
 type Project = {
@@ -7,8 +5,7 @@ type Project = {
   value: string
   features: string[]
   stack: string
-  proof: string
-  source: string
+  source?: string
   live?: string
 }
 
@@ -22,22 +19,15 @@ const projects: Project[] = [
       'Stripe billing routes, public share links, and HTML export',
     ],
     stack: 'Next.js, React, TypeScript, Supabase, Stripe, OpenAI, Tailwind',
-    proof: 'Live at myfunnelr.vercel.app. Source includes auth pages, API routes for funnels/billing/AI, and a Supabase-backed schema.',
     source: 'https://github.com/CF-LLC/funnel-maker',
     live: 'https://myfunnelr.vercel.app',
   },
   {
-    name: 'Daily Methods Hub',
-    value: 'A full-stack tracker for logging daily earning methods, reviewing totals, and managing income sources from a protected dashboard.',
-    features: [
-      'Login and signup with route protection',
-      'Methods CRUD, dashboard summaries, and CSV import/export',
-      'Supabase data layer with Stripe subscription routes in the repo',
-    ],
-    stack: 'Next.js 14, TypeScript, Supabase, Stripe, Tailwind',
-    proof: 'Deployed at daily-methods-hub.vercel.app. Repo contains auth callbacks, server actions, and API routes rather than a static demo page.',
-    source: 'https://github.com/CF-LLC/DailyMethodsHub',
-    live: 'https://daily-methods-hub.vercel.app',
+    name: 'SpockShop',
+    value: "Spock's Resale Shop: a live online store with categorized product listings and a self-hosted admin for managing items.",
+    features: ['Categorized product catalog', 'Self-hosted Postgres and /admin area', 'Mobile-friendly storefront'],
+    stack: 'Next.js, TypeScript, PostgreSQL, Docker',
+    live: 'https://spockshop.com',
   },
   {
     name: 'IG Command Center',
@@ -48,7 +38,6 @@ const projects: Project[] = [
       'PostgreSQL via Prisma/Neon plus an access-gated login path',
     ],
     stack: 'Next.js, TypeScript, Tailwind, shadcn/ui, Prisma, PostgreSQL, OpenAI',
-    proof: 'Public source at CF-LLC/IG-Command-Center documents a production-shaped app with demo mode and a real database path. No public marketing homepage is published yet.',
     source: 'https://github.com/CF-LLC/IG-Command-Center',
   },
   {
@@ -60,117 +49,43 @@ const projects: Project[] = [
       'PNG download and print-to-PDF export',
     ],
     stack: 'Next.js, TypeScript, React',
-    proof: 'Live on GitHub Pages at cf-llc.github.io/InvoiceForge with the source in CF-LLC/InvoiceForge.',
     source: 'https://github.com/CF-LLC/InvoiceForge',
     live: 'https://cf-llc.github.io/InvoiceForge/',
-  },
-  {
-    name: "Satoshi's Path",
-    value: 'A Bitcoin education site that packages calculators, price context, and learning resources so someone can plan a strategy instead of hunting scattered tabs.',
-    features: [
-      'DCA calculators and price tracking views',
-      'Personal strategy guides and curated resources',
-      'Responsive multi-page educational UI',
-    ],
-    stack: 'TypeScript, Next.js, React',
-    proof: 'Live at cf-llc.github.io/satoshis-path. Public repo CF-LLC/satoshis-path.',
-    source: 'https://github.com/CF-LLC/satoshis-path',
-    live: 'https://cf-llc.github.io/satoshis-path/',
-  },
-  {
-    name: 'ContentCascade',
-    value: 'A content tool that takes one source piece and turns it into platform-shaped posts so a creator does not rewrite the same idea six times by hand.',
-    features: [
-      'Single-source input to multi-platform output',
-      'Platform-oriented copy variants',
-      'TypeScript application structure in the public repo',
-    ],
-    stack: 'TypeScript, Next.js, React',
-    proof: 'Source is public at CF-LLC/ContentCascade. No separate live homepage is listed on the repository.',
-    source: 'https://github.com/CF-LLC/ContentCascade',
-  },
-  {
-    name: 'RogueCoin Game',
-    value: 'A browser crash-style game and airdrop experience built as a public product page for RogueCoin.',
-    features: [
-      'Interactive crash-game loop',
-      'Airdrop-oriented product surface',
-      'Deployed static frontend',
-    ],
-    stack: 'TypeScript, React, Next.js',
-    proof: 'Live at cf-llc.github.io/RogueCoinGame with source in CF-LLC/RogueCoinGame.',
-    source: 'https://github.com/CF-LLC/RogueCoinGame',
-    live: 'https://cf-llc.github.io/RogueCoinGame/',
-  },
-  {
-    name: 'Passive Income Tracker',
-    value: 'A simple tracker for logging passive income in USD or BTC so totals stay visible without a spreadsheet.',
-    features: [
-      'USD and BTC tracking views',
-      'Responsive UI for logging entries',
-      'Deployed GitHub Pages build',
-    ],
-    stack: 'TypeScript, React',
-    proof: 'Live at cf-llc.github.io/passive-income-tracker. Public source in CF-LLC/passive-income-tracker.',
-    source: 'https://github.com/CF-LLC/passive-income-tracker',
-    live: 'https://cf-llc.github.io/passive-income-tracker/',
   },
 ]
 
 export default function ProjectsSection() {
   return (
-    <section className="relative">
-      <div className="mb-16 max-w-2xl">
-        <p className="kicker">03 — Selected work</p>
-        <h2 className="display-title mt-6 text-4xl text-white sm:text-6xl">Products, not homework.</h2>
-        <p className="mt-6 text-lg leading-8 text-white/55">
-          Each build below is real source or a live deploy. Proof is limited to what the repo or live site actually shows.
-        </p>
-      </div>
-
-      <div>
-        {projects.map((project, index) => (
-          <article key={project.name} className="border-t border-white/10 py-12 last:border-b">
-            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
-              <div>
-                <p className="kicker">{String(index + 1).padStart(2, '0')}</p>
-                <h3 className="display-title mt-4 text-3xl text-white sm:text-5xl">{project.name}</h3>
-                <p className="mt-5 text-base leading-7 text-white/60">{project.value}</p>
-                <div className="mt-7 flex flex-wrap gap-6 text-sm">
-                  <a href={project.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white/70 hover:text-white">
-                    <Github className="h-4 w-4" />
-                    Source
-                  </a>
-                  {project.live && (
-                    <a href={project.live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white/70 hover:text-white">
-                      <ExternalLink className="h-4 w-4" />
-                      Live
-                    </a>
-                  )}
-                </div>
-              </div>
-              <div className="grid gap-8 sm:grid-cols-3">
-                <div>
-                  <p className="kicker">Features</p>
-                  <ul className="mt-4 space-y-2 text-sm leading-6 text-white/55">
-                    {project.features.map((feature) => (
-                      <li key={feature}>{feature}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="kicker">Tech</p>
-                  <p className="mt-4 text-sm leading-6 text-white/55">{project.stack}</p>
-                </div>
-                <div>
-                  <p className="kicker">Proof</p>
-                  <p className="mt-4 text-sm leading-6 text-white/55">{project.proof}</p>
-                </div>
-              </div>
+    <div>
+      <p className="kicker">Projects</p>
+      <h2 id="work-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Other things I&apos;ve built</h2>
+      <ul className="mt-10 grid gap-6 md:grid-cols-2">
+        {projects.map((p) => (
+          <li key={p.name} className="rounded-lg border border-white/15 bg-white/[0.03] p-6">
+            <h3 className="text-2xl text-white">{p.name}</h3>
+            <p className="mt-3 leading-7 text-white/80">{p.value}</p>
+            <ul className="mt-4 list-disc space-y-1 pl-5 text-sm leading-6 text-white/75">
+              {p.features.map((f) => <li key={f}>{f}</li>)}
+            </ul>
+            <p className="mt-4 text-sm text-white/70"><span className="font-semibold text-white/85">Tech:</span> {p.stack}</p>
+            <div className="mt-5 flex flex-wrap gap-5 text-sm">
+              {p.live && (
+                <a href={p.live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 underline underline-offset-4 hover:text-white">
+                  <ExternalLink aria-hidden="true" className="h-4 w-4" />Live<span className="sr-only"> site for {p.name} (opens in new tab)</span>
+                </a>
+              )}
+              {p.source && (
+                <a href={p.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 underline underline-offset-4 hover:text-white">
+                  <Github aria-hidden="true" className="h-4 w-4" />Source<span className="sr-only"> code for {p.name} (opens in new tab)</span>
+                </a>
+              )}
             </div>
-          </article>
+          </li>
         ))}
-      </div>
-    </section>
+      </ul>
+      <p className="mt-8">
+        <a href="https://github.com/coopfeathy" className="font-semibold underline underline-offset-4">More work on GitHub →</a>
+      </p>
+    </div>
   )
 }

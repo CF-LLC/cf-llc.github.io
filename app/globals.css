@@ -54,10 +54,10 @@ h3 {
 
 .kicker {
   font-family: var(--font-body), sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(236, 234, 228, 0.46);
+  color: rgba(236, 234, 228, 0.78);
 }
 
 .hairline {
