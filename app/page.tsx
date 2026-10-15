@@ -3,8 +3,8 @@ import SampleMockups from '@/components/SampleMockups'
 import MockupForm from '@/components/MockupForm'
 
 // Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
-// Links: live Stripe payment links from agent-payment-links.md. No untagged set exists,
-// so these are the rep-gptoss links.
+// Links: live house Stripe payment links (metadata rep=house, source=storefront),
+// so storefront sales are credited to the site, not an agent rep.
 const packages = [
   {
     name: 'Starter Site',
@@ -12,7 +12,7 @@ const packages = [
     priceNote: 'setup + $39/mo',
     blurb: 'A 1–3 page mobile site with a contact form. Hosting and updates included in the monthly fee.',
     items: ['1–3 pages', 'Mobile-first design', 'Contact form', 'Hosting & updates'],
-    href: 'https://buy.stripe.com/14AbJ1dUM5K96M2fEr4c800',
+    href: 'https://buy.stripe.com/14A28rg2Ua0p0nE77V4c80l',
     featured: true,
   },
   {
@@ -21,7 +21,7 @@ const packages = [
     priceNote: 'setup + $59/mo',
     blurb: 'More room for a growing business: booking, menu or gallery pages, plus basic SEO.',
     items: ['Up to 8 pages', 'Booking, menu or gallery', 'Basic SEO', '2 revision rounds'],
-    href: 'https://buy.stripe.com/00w28r5og8Wl9Yeak74c801',
+    href: 'https://buy.stripe.com/4gMdR9bME3C1daq1NB4c80m',
     featured: false,
   },
   {
@@ -30,7 +30,7 @@ const packages = [
     priceNote: 'per month',
     blurb: 'Already have a site? I keep it updated and watched.',
     items: ['Updates', 'Uptime checks', 'Monthly report', 'For an existing site'],
-    href: 'https://buy.stripe.com/7sY4gzg2Uc8xdaq2RF4c802',
+    href: 'https://buy.stripe.com/dRm8wP6ska0pdaqdwj4c80n',
     featured: false,
   },
 ]
