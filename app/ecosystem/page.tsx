@@ -20,12 +20,6 @@ export default function EcosystemPage() {
         </nav>
       </header>
       <main id="main" className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
-        <p className="kicker mt-4">Cooper Featherstone LLC</p>
-        <h1 className="display-title mt-4 text-5xl text-white sm:text-6xl">My Ecosystem</h1>
-        <p className="mt-4 max-w-2xl text-white/75">
-          Everything I run, in one map. Drag to rotate, pinch or scroll to zoom, and tap a node for details.
-          Private tools are shown for context only.
-        </p>
         <EcosystemGraph />
       </main>
     </div>
