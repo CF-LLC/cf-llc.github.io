@@ -59,6 +59,7 @@ export default function Home() {
           <a href="#packages" className="hover:text-white">Packages</a>
           <a href="#samples" className="hover:text-white">Samples</a>
           <a href="#faq" className="hover:text-white">FAQ</a>
+          <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
           <a href="#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>
         </nav>
       </header>

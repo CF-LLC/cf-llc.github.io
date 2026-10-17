@@ -1,0 +1,19 @@
+{
+  "_comment": "Edit this file to add or change nodes. Public nodes need a url. Private nodes must NOT have a url or hostname: only a generic name.",
+  "center": { "id": "cfllc", "name": "CF LLC" },
+  "nodes": [
+    { "id": "site", "name": "cf-llc.github.io", "group": "public", "url": "https://cf-llc.github.io/", "desc": "CF LLC home" },
+    { "id": "packages", "name": "Starter Sites: Packages", "group": "public", "parent": "site", "url": "https://cf-llc.github.io/#packages", "desc": "Starter, Pro and Site Care pricing" },
+    { "id": "samples", "name": "Starter Sites: Samples", "group": "public", "parent": "site", "url": "https://cf-llc.github.io/#samples", "desc": "Before and after samples" },
+    { "id": "mockup", "name": "Starter Sites: Free mockup", "group": "public", "parent": "site", "url": "https://cf-llc.github.io/#mockup", "desc": "Request a free homepage mockup" },
+    { "id": "spockshop", "name": "SpockShop", "group": "public", "url": "https://spockshop.com/", "desc": "Online shop" },
+    { "id": "blog", "name": "SpockShop Blog", "group": "public", "parent": "spockshop", "url": "https://blog.spockshop.com/", "desc": "Blog" },
+    { "id": "funnels", "name": "SpockShop Funnels", "group": "soon", "parent": "spockshop", "desc": "Coming soon" },
+    { "id": "motivation", "name": "Spock Motivation", "group": "public", "url": "https://spock-motivation.netlify.app/", "desc": "Motivation app" },
+    { "id": "hq", "name": "HQ dashboard", "group": "private" },
+    { "id": "sales", "name": "Sales team dashboard", "group": "private" },
+    { "id": "ig", "name": "Instagram tools", "group": "private" },
+    { "id": "bounty", "name": "Bounty tracker", "group": "private" },
+    { "id": "chess", "name": "Chess Coach Copilot preview", "group": "private" }
+  ]
+}
