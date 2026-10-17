@@ -53,10 +53,18 @@
     },
     {
       "id": "funnels",
-      "name": "SpockShop Funnels",
-      "group": "soon",
-      "parent": "spockshop",
-      "desc": "Coming soon"
+      "name": "Funnels",
+      "group": "public",
+      "parent": "saasnation",
+      "url": "https://funnels.saasnation.site/",
+      "desc": "Funnel maker"
+    },
+    {
+      "id": "saasnation",
+      "name": "SaaS Nation",
+      "group": "public",
+      "url": "https://saasnation.site/",
+      "desc": "Library of micro-SaaS tools, coming soon"
     },
     {
       "id": "motivation",
@@ -121,8 +129,12 @@
         "hq",
         "sales",
         "bounty",
-        "ig"
+        "ig",
+        "saasnation"
       ]
+    },
+    "homepageOverride": {
+      "CF-LLC/funnel-maker": "https://funnels.saasnation.site/"
     }
   }
 }

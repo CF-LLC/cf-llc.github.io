@@ -47,7 +47,7 @@ async function main() {
   const repos = raw.map((r) => ({
     full: r.full_name, name: r.name, owner: r.owner.login,
     desc: (r.description || '').slice(0, 160), url: r.html_url,
-    homepage: safeHomepage(r.homepage), lang: r.language || null, fork: !!r.fork, archived: !!r.archived,
+    homepage: safeHomepage((cfg.repos.homepageOverride || {})[r.full_name] || r.homepage), lang: r.language || null, fork: !!r.fork, archived: !!r.archived,
     pushed: (r.pushed_at || '').slice(0, 10), sites: siteMap[r.full_name] || [],
   }))
   // Live = mapped to a site node, or has a homepage that answers right now.

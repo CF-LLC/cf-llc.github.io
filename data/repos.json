@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T03:39:59.953Z",
+ "generatedAt": "2026-10-17T03:50:15.150Z",
  "public": [
   {
    "full": "CF-LLC/.github",
@@ -111,7 +111,7 @@
    "owner": "CF-LLC",
    "desc": "Create professional sales funnels with our drag-and-drop builder. No coding required.",
    "url": "https://github.com/CF-LLC/funnel-maker",
-   "homepage": "https://myfunnelr.vercel.app/",
+   "homepage": "https://funnels.saasnation.site/",
    "lang": "TypeScript",
    "fork": false,
    "archived": false,
@@ -957,7 +957,8 @@
    "hq",
    "sales",
    "bounty",
-   "ig"
+   "ig",
+   "saasnation"
   ]
  }
 }
