@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- untyped CDN globals (THREE) */
 import { useEffect, useRef, useState } from 'react'
 import data from '../data/ecosystem.json'
+import repoData from '../data/repos.json'
 
 // Pinned CDN builds with Subresource Integrity, loaded in order.
 // three r147 is the last release that ships the classic examples/js (global THREE.*) addons.
@@ -21,14 +22,70 @@ const FX = [
   ['examples/js/postprocessing/UnrealBloomPass.js', 'sha384-EYOqTmLl8GhcXCeuHZ88cRp7inJaG/+pOg9hPG2GjQp535CVdHPNqMDbJMBbOypa'],
 ]
 
-type Group = 'center' | 'public' | 'soon' | 'private'
-type Node = { id: string; name: string; group: Group; url?: string; desc?: string; parent?: string }
+type Group = 'center' | 'public' | 'soon' | 'private' | 'repo' | 'repoDark' | 'repoPrivate'
+type Node = {
+  id: string; name: string; group: Group; url?: string; desc?: string; parent?: string
+  // repo nodes only (public repos come from data/repos.json, generated at build; private repos are anonymous)
+  kind?: 'repo'; zone?: 'live' | 'dark'; gh?: string; home?: string | null; lang?: string | null; owner?: string; fork?: boolean
+}
+type Repo = { full: string; name: string; owner: string; desc: string; url: string; homepage: string | null; lang: string | null; fork: boolean; sites: string[]; live: boolean }
 type Status = 'checking' | 'up' | 'unknown' | 'down'
 
-const COLORS: Record<Group, string> = { center: '#ffe9c7', public: '#4fd1e0', soon: '#f08a3c', private: '#c43b72' }
+const COLORS: Record<Group, string> = { center: '#ffe9c7', public: '#4fd1e0', soon: '#f08a3c', private: '#c43b72', repo: '#b9f3ff', repoDark: '#8f8aa8', repoPrivate: '#b0507f' }
 
 const nodes: Node[] = [{ id: data.center.id, name: data.center.name, group: 'center' }, ...(data.nodes as Node[])]
 const links = (data.nodes as Node[]).map((n) => ({ source: n.parent || data.center.id, target: n.id }))
+
+// Repos: live ones orbit the site they power; everything else drifts in the Outer Darkness.
+const siteIds = new Set(nodes.map((n) => n.id))
+const repoNodes: Node[] = []
+const repoLinks: { source: string; target: string }[] = []
+;(repoData.public as Repo[]).forEach((r) => {
+  const sites = r.sites.filter((s) => siteIds.has(s))
+  const id = `r:${r.full}`
+  repoNodes.push({ id, name: r.name, group: r.live ? 'repo' : 'repoDark', kind: 'repo', zone: r.live ? 'live' : 'dark', parent: r.live ? sites[0] || data.center.id : undefined, desc: r.desc || undefined, gh: r.url, home: r.homepage, lang: r.lang, owner: r.owner, fork: r.fork })
+  if (r.live) (sites.length ? sites : [data.center.id]).forEach((s) => repoLinks.push({ source: s, target: id }))
+})
+const PRIVATE = repoData.private as { count: number; linkedSites: string[] }
+for (let i = 0; i < PRIVATE.count; i++) {
+  const site = PRIVATE.linkedSites[i] && siteIds.has(PRIVATE.linkedSites[i]) ? PRIVATE.linkedSites[i] : undefined
+  const id = `p:${i}`
+  repoNodes.push({ id, name: 'Private repo', group: 'repoPrivate', kind: 'repo', zone: site ? 'live' : 'dark', parent: site })
+  if (site) repoLinks.push({ source: site, target: id })
+}
+const allNodes = [...nodes, ...repoNodes]
+const REPO_STATS = { total: repoNodes.length, live: repoNodes.filter((n) => n.zone === 'live').length, dark: repoNodes.filter((n) => n.zone === 'dark').length, priv: PRIVATE.count }
+
+function rand(seed: number) {
+  // mulberry32: deterministic layout without depending on names
+  return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+}
+const DARK_R = 225
+function repoLayout(pos: Record<string, [number, number, number]>) {
+  const bySite: Record<string, Node[]> = {}
+  const coreLive: Node[] = [], dark: Node[] = []
+  repoNodes.forEach((n) => {
+    if (n.zone === 'dark') dark.push(n)
+    else if (n.parent && n.parent !== data.center.id) (bySite[n.parent] ||= []).push(n)
+    else coreLive.push(n)
+  })
+  Object.entries(bySite).forEach(([sid, list]) => {
+    const [px, py, pz] = pos[sid]
+    list.forEach((n, k) => {
+      const a = k * 2.39996 + 0.5, r = 12 + (k % 3) * 4
+      pos[n.id] = [px + Math.cos(a) * r, py + ((k % 5) - 2) * 3.2 - 6, pz + Math.sin(a) * r]
+    })
+  })
+  coreLive.forEach((n, i) => {
+    const a = (i / Math.max(coreLive.length, 1)) * Math.PI * 2 + 1.1
+    pos[n.id] = [Math.cos(a) * 108, (i % 2 ? 1 : -1) * 8, Math.sin(a) * 108]
+  })
+  const rnd = rand(7)
+  dark.forEach((n, i) => {
+    const a = i * 2.39996, r = DARK_R - 25 + rnd() * 50
+    pos[n.id] = [Math.cos(a) * r, (rnd() - 0.5) * 70, Math.sin(a) * r]
+  })
+}
 
 function hasWebGL(): boolean {
   try {
@@ -62,6 +119,7 @@ const STATUS_LABEL: Record<Status, string> = { checking: 'checking…', up: 'up'
 const STATUS_DOT: Record<Status, string> = { checking: '#6b6963', up: '#5fdf8f', unknown: '#9a978f', down: '#e4573f' }
 
 function tag(n: Node) {
+  if (n.kind === 'repo') return n.group === 'repoPrivate' ? 'Private repo' : 'Public repo'
   return n.group === 'private' ? 'Private' : n.group === 'soon' ? 'Coming soon' : n.group === 'center' ? 'Core' : 'Public'
 }
 
@@ -101,8 +159,8 @@ function radial(T: any, stops: [number, string][], size = 128) {
   return new T.CanvasTexture(c)
 }
 
-function labelSprite(T: any, n: Node, mobile: boolean) {
-  const k2 = 2
+function labelSprite(T: any, n: Node, mobile: boolean, small = false) {
+  const k2 = small ? 1 : 2
   const c = document.createElement('canvas'); c.width = 512 * k2; c.height = 128 * k2
   const g = c.getContext('2d')!; g.scale(k2, k2)
   const priv = n.group === 'private'
@@ -124,7 +182,7 @@ function labelSprite(T: any, n: Node, mobile: boolean) {
   if (n.group !== 'center') g.fillText(sub, 256, 92)
   const tex = new T.CanvasTexture(c); tex.minFilter = T.LinearFilter
   const s = new T.Sprite(new T.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }))
-  const k = mobile ? 1.6 : 1
+  const k = (mobile ? 1.6 : 1) * (small ? 0.62 : 1)
   s.scale.set(38 * k, 9.5 * k, 1)
   return s
 }
@@ -148,15 +206,15 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
   el.appendChild(renderer.domElement)
 
   const scene = new T.Scene()
-  scene.fog = new T.FogExp2(0x030306, 0.0028)
+  scene.fog = new T.FogExp2(0x030306, 0.0011)
   const camera = new T.PerspectiveCamera(mobile ? 62 : 50, W() / H(), 0.1, 3000)
-  const home = new T.Vector3(0, mobile ? 245 : 92, mobile ? 200 : 178)
-  const homeTarget = new T.Vector3(0, mobile ? -40 : -14, 0)
-  camera.position.set(0, 260, 760)
+  const home = new T.Vector3(0, mobile ? 470 : 190, mobile ? 330 : 380)
+  const homeTarget = new T.Vector3(0, mobile ? -60 : -40, 0)
+  camera.position.set(0, 420, 1150)
 
   const controls = new T.OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true; controls.dampingFactor = 0.07
-  controls.enablePan = false; controls.minDistance = 40; controls.maxDistance = 420
+  controls.enablePan = false; controls.minDistance = 40; controls.maxDistance = 720
   controls.rotateSpeed = mobile ? 0.6 : 0.8; controls.zoomSpeed = 0.8
   controls.target.copy(homeTarget); controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.55
 
@@ -196,10 +254,14 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
 
   // Worlds
   const pos = layout()
+  repoLayout(pos)
   const glowTex = radial(T, [[0, 'rgba(255,255,255,0.9)'], [0.25, 'rgba(255,255,255,0.35)'], [1, 'rgba(255,255,255,0)']], 128)
   const seg = mobile ? 24 : 40
-  const glowOp = (g: Group) => (g === 'center' ? 0.6 : g === 'private' ? 0.18 : 0.42)
-  type NObj = { node: Node; group: any; core: any; glow: any; label: any; base: number }
+  const glowOp = (n: Node) => {
+    if (n.kind === 'repo') return n.group === 'repo' ? 0.95 : n.group === 'repoPrivate' ? (n.zone === 'live' ? 0.6 : 0.45) : 0.62
+    return n.group === 'center' ? 0.6 : n.group === 'private' ? 0.18 : 0.42
+  }
+  type NObj = { node: Node; group: any; core: any; glow: any; label: any | null; base: number }
   const objs: Record<string, NObj> = {}
   const pickables: any[] = []
   nodes.forEach((n) => {
@@ -215,7 +277,7 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
       vertexShader: ATMO_VS, fragmentShader: ATMO_FS, side: T.BackSide, transparent: true, depthWrite: false, blending: T.AdditiveBlending,
       uniforms: { uColor: { value: n.group === 'center' ? new T.Color('#ffb46b') : col }, uPower: { value: n.group === 'private' ? 3.0 : 2.0 }, uOpacity: { value: n.group === 'private' ? 0.45 : 1.0 } },
     })))
-    const glow = new T.Sprite(new T.SpriteMaterial({ map: glowTex, color: n.group === 'center' ? new T.Color('#ffcf8a') : col, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: glowOp(n.group) }))
+    const glow = new T.Sprite(new T.SpriteMaterial({ map: glowTex, color: n.group === 'center' ? new T.Color('#ffcf8a') : col, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: glowOp(n) }))
     const gs = r * (n.group === 'center' ? 5.5 : 4); glow.scale.set(gs, gs, 1); g.add(glow)
     if (n.group === 'private') {
       const ring = new T.Mesh(new T.TorusGeometry(r * 1.55, 0.25, 8, 48), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.35 }))
@@ -226,20 +288,49 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
     objs[n.id] = { node: n, group: g, core, glow, label, base: 1 }
   })
 
+  // Repo moons: cheap additive sprites (no meshes) so ~100 of them stay smooth on phones.
+  const dotTex = radial(T, [[0, 'rgba(255,255,255,1)'], [0.18, 'rgba(255,255,255,0.85)'], [0.45, 'rgba(255,255,255,0.18)'], [1, 'rgba(255,255,255,0)']], 64)
+  repoNodes.forEach((n) => {
+    const g = new T.Group(); g.position.set(...pos[n.id]); scene.add(g)
+    const sp = new T.Sprite(new T.SpriteMaterial({ map: dotTex, color: new T.Color(COLORS[n.group]), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: glowOp(n) }))
+    const sz = n.group === 'repo' ? 6 : n.zone === 'live' ? 5 : mobile ? 9 : 6.5
+    sp.scale.set(sz, sz, 1); g.add(sp)
+    let label = null
+    if (n.group === 'repo' && !mobile) { label = labelSprite(T, n, mobile, true); label.position.set(0, 4.5, 0); g.add(label) }
+    sp.userData.id = n.id; pickables.push(sp)
+    objs[n.id] = { node: n, group: g, core: sp, glow: sp, label, base: 1 }
+  })
+
+  // The Outer Darkness: a faint ring, dim nebula and a floating sign.
+  const ringPts = Array.from({ length: 129 }, (_, i) => { const a = (i / 128) * Math.PI * 2; return new T.Vector3(Math.cos(a) * DARK_R, 0, Math.sin(a) * DARK_R) })
+  scene.add(new T.Line(new T.BufferGeometry().setFromPoints(ringPts), new T.LineBasicMaterial({ color: 0x7d6aa8, transparent: true, opacity: 0.28, depthWrite: false })))
+  const darkTex = radial(T, [[0, 'rgba(90,70,130,0.5)'], [0.5, 'rgba(50,40,80,0.18)'], [1, 'rgba(20,15,40,0)']], 128)
+  const dn = mobile ? 5 : 10
+  for (let i = 0; i < dn; i++) {
+    const a = (i / dn) * Math.PI * 2 + 0.3
+    const s = new T.Sprite(new T.SpriteMaterial({ map: darkTex, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0.5 }))
+    s.position.set(Math.cos(a) * DARK_R, (i % 2 ? 1 : -1) * 10, Math.sin(a) * DARK_R); s.scale.set(170, 110, 1); scene.add(s)
+  }
+  ;[0, Math.PI].forEach((a) => {
+    const sign = labelSprite(T, { id: 'od', name: 'Outer Darkness', group: 'center' }, mobile)
+    sign.material.opacity = 0.55; sign.position.set(Math.cos(a + 0.6) * DARK_R, 48, Math.sin(a + 0.6) * DARK_R); sign.scale.multiplyScalar(1.6); scene.add(sign)
+  })
+
   // Links with flowing light pulses
   const linkObjs: { a: string; b: string; line: any; curve: any; pulses: any[]; op: number }[] = []
   const pulseTex = radial(T, [[0, 'rgba(255,255,255,1)'], [0.35, 'rgba(255,255,255,0.4)'], [1, 'rgba(255,255,255,0)']], 64)
-  links.forEach((l, i) => {
+  ;[...links, ...repoLinks].forEach((l, i) => {
     const A = new T.Vector3(...pos[l.source]), B = new T.Vector3(...pos[l.target])
     const mid = A.clone().add(B).multiplyScalar(0.5); mid.y += A.distanceTo(B) * 0.18
     const curve = new T.QuadraticBezierCurve3(A, mid, B)
     const tgt = objs[l.target].node
     const col = new T.Color(COLORS[tgt.group])
-    const op = tgt.group === 'private' ? 0.16 : 0.34
+    const isRepo = tgt.kind === 'repo'
+    const op = isRepo ? 0.12 : tgt.group === 'private' ? 0.16 : 0.34
     const line = new T.Line(new T.BufferGeometry().setFromPoints(curve.getPoints(40)), new T.LineBasicMaterial({ color: col, transparent: true, opacity: op, blending: T.AdditiveBlending, depthWrite: false }))
     scene.add(line)
     const pulses: any[] = []
-    const np = reduced || tgt.group === 'private' ? 0 : mobile ? 1 : 2
+    const np = reduced || isRepo || tgt.group === 'private' ? 0 : mobile ? 1 : 2
     for (let k = 0; k < np; k++) {
       const s = new T.Sprite(new T.SpriteMaterial({ map: pulseTex, color: col.clone().lerp(new T.Color('#ffffff'), 0.4), transparent: true, depthWrite: false, blending: T.AdditiveBlending }))
       s.scale.set(4.5, 4.5, 1); s.userData.off = k / np + i * 0.137; scene.add(s); pulses.push(s)
@@ -247,7 +338,7 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
     linkObjs.push({ a: l.source, b: l.target, line, curve, pulses, op })
   })
   const neighbors: Record<string, Set<string>> = {}
-  links.forEach((l) => { (neighbors[l.source] ||= new Set()).add(l.target); (neighbors[l.target] ||= new Set()).add(l.source) })
+  ;[...links, ...repoLinks].forEach((l) => { (neighbors[l.source] ||= new Set()).add(l.target); (neighbors[l.target] ||= new Set()).add(l.source) })
 
   // Bloom (lighter on phones)
   let composer: any = null
@@ -284,8 +375,8 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
     const set = id ? new Set([id, ...Array.from(neighbors[id] || [])]) : null
     Object.values(objs).forEach((o) => {
       const on = !set || set.has(o.node.id)
-      o.label.material.opacity = on ? 1 : 0.18
-      o.glow.material.opacity = (on ? 1 : 0.25) * glowOp(o.node.group)
+      if (o.label) o.label.material.opacity = on ? 1 : 0.18
+      o.glow.material.opacity = (on ? 1 : 0.25) * glowOp(o.node)
       o.base = id === o.node.id ? 1.35 : 1
     })
     linkObjs.forEach((L) => {
@@ -298,7 +389,7 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
     if (!id) { focus = { pos: home.clone(), tgt: homeTarget.clone() }; highlight(null); return }
     const p = objs[id].group.position.clone()
     const dir = p.clone().sub(camera.position).normalize()
-    const dist = id === data.center.id ? (mobile ? 220 : 170) : mobile ? 70 : 52
+    const dist = id === data.center.id ? (mobile ? 220 : 170) : objs[id].node.kind === 'repo' ? (mobile ? 48 : 34) : mobile ? 70 : 52
     focus = { pos: p.clone().sub(dir.multiplyScalar(dist)).add(new T.Vector3(0, 10, 0)), tgt: p }
     highlight(id)
   }
@@ -313,7 +404,7 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
     if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 6) return
     const id = pick(e)
     flyTo(id)
-    onSelect(id ? nodes.find((n) => n.id === id) || null : null)
+    onSelect(id ? allNodes.find((n) => n.id === id) || null : null)
   }
   const cv = renderer.domElement
   cv.addEventListener('pointermove', onMove); cv.addEventListener('pointerdown', onDown); cv.addEventListener('pointerup', onUp)
@@ -370,7 +461,7 @@ function buildScene(el: HTMLDivElement, fx: boolean, onSelect: (n: Node | null) 
 }
 
 const GRAD = 'bg-gradient-to-r from-[#ffe9c7] via-[#ff8fbf] to-[#4fd1e0] bg-clip-text text-transparent'
-const LEGEND: [Group, string][] = [['public', 'Public site'], ['soon', 'Coming soon'], ['private', 'Private']]
+const LEGEND: [Group, string][] = [['public', 'Public site'], ['soon', 'Coming soon'], ['private', 'Private'], ['repo', 'Live repo'], ['repoDark', 'Outer Darkness repo']]
 
 export default function EcosystemGraph() {
   const box = useRef<HTMLDivElement>(null)
@@ -428,6 +519,7 @@ export default function EcosystemGraph() {
             <p className="kicker text-[0.65rem] sm:text-xs">Cooper Featherstone LLC</p>
             <h1 className={`display-title mt-2 text-5xl sm:text-7xl ${GRAD}`}>My Ecosystem</h1>
             <p className="mt-2 max-w-md text-sm text-white/65">Everything I build and run, in one universe. Drag to orbit, pinch or scroll to zoom, tap a world.</p>
+            <p className="mt-3 text-[11px] uppercase tracking-[0.22em] text-white/45">{nodes.length - 1} worlds · {REPO_STATS.total} repos · {REPO_STATS.dark} in the Outer Darkness</p>
           </div>
           <div className="pointer-events-none absolute bottom-4 right-4 flex flex-col gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-[11px] text-white/70 backdrop-blur-md">
             {LEGEND.map(([g, label]) => (
@@ -443,7 +535,23 @@ export default function EcosystemGraph() {
               <p className="text-[11px] uppercase tracking-[0.25em]" style={{ color: COLORS[selected.group] }}>{selected.group === 'private' ? '🔒 ' : ''}{tag(selected)}</p>
               <p className="mt-1 text-xl font-semibold text-white">{selected.name}{dot(selected.id)}</p>
               {selected.desc && <p className="mt-1 text-sm text-white/70">{selected.desc}</p>}
-              {selected.group === 'public' && selected.url ? (
+              {selected.kind === 'repo' ? (
+                <>
+                  <p className="mt-1 text-xs text-white/55">
+                    {selected.zone === 'live' ? 'Live' : 'Outer Darkness: not live right now'}
+                    {selected.owner ? ` · ${selected.owner}` : ''}{selected.lang ? ` · ${selected.lang}` : ''}{selected.fork ? ' · fork' : ''}
+                    {selected.parent && selected.parent !== data.center.id ? ` · powers ${nodes.find((n) => n.id === selected.parent)?.name ?? ''}` : ''}
+                  </p>
+                  {selected.gh ? (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <a href={selected.gh} target="_blank" rel="noopener noreferrer" className="inline-block rounded-full bg-gradient-to-r from-[#ffe9c7] to-[#4fd1e0] px-5 py-2 text-sm font-semibold text-[#070708] hover:brightness-110">View on GitHub ↗</a>
+                      {selected.home ? <a href={selected.home} target="_blank" rel="noopener noreferrer" className="inline-block rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white hover:border-white">Open site ↗</a> : null}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm text-white/55">Private repository. Name and details are hidden.</p>
+                  )}
+                </>
+              ) : selected.group === 'public' && selected.url ? (
                 <a href={selected.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block rounded-full bg-gradient-to-r from-[#ffe9c7] to-[#4fd1e0] px-5 py-2 text-sm font-semibold text-[#070708] hover:brightness-110">Open site ↗</a>
               ) : selected.group === 'private' ? (
                 <p className="mt-2 text-sm text-white/55">Private tool, not publicly accessible.</p>
@@ -478,6 +586,27 @@ export default function EcosystemGraph() {
           </li>
         ))}
       </ul>
+
+      <h2 className="display-title mt-12 text-3xl text-white">Repositories</h2>
+      <p className="mt-2 text-sm text-white/60">{REPO_STATS.total} repos across CF-LLC and coopfeathy. Live ones orbit the site they power; the rest drift in the Outer Darkness.</p>
+      <h3 className="mt-6 text-xs uppercase tracking-[0.2em] text-[#b9f3ff]">Live</h3>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {repoNodes.filter((n) => n.zone === 'live' && n.gh).map((n) => (
+          <li key={n.id} className="glass rounded-lg px-4 py-3 text-sm">
+            <a href={n.gh} target="_blank" rel="noopener noreferrer" className="font-semibold text-white underline underline-offset-4">{n.owner}/{n.name}</a>
+            {n.desc ? <span className="block text-white/55">{n.desc}</span> : null}
+          </li>
+        ))}
+      </ul>
+      <details className="glass mt-4 rounded-lg px-4 py-3">
+        <summary className="cursor-pointer text-sm font-semibold text-white/80">Outer Darkness ({repoNodes.filter((n) => n.zone === 'dark' && n.gh).length} public repos)</summary>
+        <ul className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
+          {repoNodes.filter((n) => n.zone === 'dark' && n.gh).map((n) => (
+            <li key={n.id}><a href={n.gh} target="_blank" rel="noopener noreferrer" className="text-white/70 underline underline-offset-4 hover:text-white">{n.owner}/{n.name}</a></li>
+          ))}
+        </ul>
+      </details>
+      <p className="mt-4 text-sm text-white/55">🔒 Plus {REPO_STATS.priv} private repositories (names hidden){PRIVATE.linkedSites.length ? `, ${PRIVATE.linkedSites.length} of which power the private tools above` : ''}.</p>
     </section>
   )
 }
