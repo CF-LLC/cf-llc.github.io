@@ -6,7 +6,7 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
-    "build": "next build && touch out/.nojekyll",
+    "build": "next build && touch out/.nojekyll && node scripts/slash-pages.mjs",
     "export": "next export"
   },
   "dependencies": {
