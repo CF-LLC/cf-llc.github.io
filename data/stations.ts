@@ -1,66 +1,56 @@
-// Stops on the home-page flight. Public stops link out; private stops have NO url or hostname, only a description.
-export type Station = {
+// Stops on the home-page flight. Facts only from live sites and repos. No street address, no phone, no private URLs.
+export type Stop = {
   id: string
-  kind: 'planet' | 'station' | 'gas' | 'moon'
-  name: string
   kicker: string
-  blurb: string
+  title: string
+  body: string
   points: string[]
-  url?: string
-  cta?: string
-  private?: boolean
-  color: string
+  links?: { label: string; href: string }[]
   accent: string
-  rings?: boolean
 }
 
-export const stations: Station[] = [
+export const stops: Stop[] = [
   {
-    id: 'spockshop', kind: 'planet', name: 'SpockShop', kicker: 'Live store · spockshop.com',
-    blurb: "Spock's Resale Shop: a real online store with curated finds, sci-fi collectibles and everyday picks, shipped to your door.",
-    points: ['Self-hosted storefront and admin', 'Bulk Depop import into reviewable drafts', 'Blog and gift guides'],
-    url: 'https://spockshop.com/', cta: 'Visit SpockShop', color: '#2f7fd6', accent: '#7fe3ff',
+    id: 'about', kicker: 'Stop 1 · Home star', title: 'CF LLC',
+    body: 'A one-person studio that builds and runs its own fleet of websites and software, and builds mobile-friendly websites for small businesses anywhere in the US.',
+    points: ['Starter Sites from $499 setup + $39/mo', 'Live in about a week after mockup approval', 'Everything done remotely, by email'],
+    links: [{ label: 'Free homepage mockup', href: '#mockup' }, { label: 'See packages', href: '#packages' }],
+    accent: '#ffd27a',
   },
   {
-    id: 'funnels', kind: 'station', name: 'Funnel Maker', kicker: 'SaaS · funnels.saasnation.site',
-    blurb: 'Build a landing page, waitlist or launch funnel in three steps: pick an animated template, click to edit, publish.',
-    points: ['Live click-to-edit preview', 'Animated templates that respect reduced motion', 'Works on phones end to end'],
-    url: 'https://funnels.saasnation.site/', cta: 'Open Funnel Maker', color: '#b84de0', accent: '#ff7ad9',
+    id: 'saas', kicker: 'Stop 2 · The SaaS system', title: 'SaaS Nation',
+    body: 'SaaS Nation is a library of micro-SaaS tools, coming soon: small, focused apps that each do one job well, all in one place. Two worlds already orbit it.',
+    points: [
+      'Funnel Maker (live): build a landing page or launch funnel in three steps, pick a template, click to edit, publish',
+      'Five animated templates, from Aurora waitlist to Neon link hub',
+      'InvoiceForge: a free invoice generator with business profiles, any currency, and PDF or image export',
+    ],
+    links: [
+      { label: 'SaaS Nation', href: 'https://saasnation.site/' },
+      { label: 'Funnel Maker', href: 'https://funnels.saasnation.site/' },
+      { label: 'InvoiceForge', href: 'https://cf-llc.github.io/InvoiceForge/' },
+    ],
+    accent: '#ff7ad9',
   },
   {
-    id: 'saasnation', kind: 'gas', name: 'SaaS Nation', kicker: 'Coming soon · saasnation.site',
-    blurb: 'A growing library of small, focused software tools for creators and small businesses. Funnel Maker is the first to launch.',
-    points: ['One account, many tools', 'Fair monthly pricing', 'Join the waitlist for early access'],
-    url: 'https://saasnation.site/', cta: 'Join the waitlist', color: '#e0823c', accent: '#ffd27a', rings: true,
+    id: 'spockshop', kicker: 'Stop 3 · Blue planet', title: 'SpockShop',
+    body: "Spock's Resale Shop: a real, self-hosted online store with curated finds and sci-fi collectibles, plus a blog and gift guides.",
+    points: ['Categorized catalog with a self-hosted admin', 'Ship-to-you checkout', 'New listings reviewed as drafts before they go live'],
+    links: [{ label: 'Visit spockshop.com', href: 'https://spockshop.com/' }, { label: 'Read the blog', href: 'https://blog.spockshop.com/' }],
+    accent: '#7fe3ff',
   },
   {
-    id: 'claw', kind: 'station', name: 'OpenClaw · Claw', kicker: 'Internal · agent operations',
-    blurb: 'The mission-control deck for a small crew of AI agents that research leads and draft outreach, with a human approving every send.',
-    points: ['Daily send caps, opt-out and pause built in', 'Per-agent pause and status', 'Private dashboard, not public'],
-    private: true, color: '#3cc9a0', accent: '#a6ffd9',
+    id: 'ecosystem', kicker: 'Stop 4 · The constellation', title: 'Ecosystem & repos',
+    body: 'Every site, tool and repository on one interactive 3D star map: live products up front, experiments drifting in the Outer Darkness, and private projects shown only as anonymous lights.',
+    points: ['Live status for public sites', 'Public repos fetched at every build', 'Private work counted, never exposed'],
+    links: [{ label: 'Open the ecosystem map', href: '/ecosystem' }, { label: 'GitHub', href: 'https://github.com/CF-LLC' }],
+    accent: '#a6ffd9',
   },
   {
-    id: 'bounty', kind: 'moon', name: 'Bounty', kicker: 'Internal · research tracker',
-    blurb: 'A private tracker for responsible security research: findings, status and follow-ups in one place.',
-    points: ['Private, access-gated', 'Nightly backups', 'Responsible disclosure only'],
-    private: true, color: '#c43b72', accent: '#ff9fc4',
-  },
-  {
-    id: 'chess', kind: 'planet', name: 'Chess Coach Copilot', kicker: 'In preview',
-    blurb: 'Tools that help chess coaches turn student games into lesson notes and practice packs, faster.',
-    points: ['Game review to lesson plan', 'Practice packs for students', 'Private preview with coaches'],
-    private: true, color: '#d9d2c0', accent: '#fff4d6',
-  },
-  {
-    id: 'hq', kind: 'moon', name: 'HQ & tools', kicker: 'Internal · the back office',
-    blurb: 'An HQ dashboard, a sales-team board and social tools keep the whole fleet running, quietly and privately.',
-    points: ['Money and system health at a glance', 'Social scheduling tools', 'Private by design'],
-    private: true, color: '#6b6fd6', accent: '#b9bcff',
-  },
-  {
-    id: 'ecosystem', kind: 'gas', name: 'The Ecosystem', kicker: 'Map · /ecosystem',
-    blurb: 'See every site, tool and repo on one interactive 3D star map, from live products to the Outer Darkness of experiments.',
-    points: ['Live status for public sites', 'Repos fetched at build time', 'Private projects shown anonymously'],
-    url: '/ecosystem', cta: 'Explore the map', color: '#4aa8b8', accent: '#b9f3ff', rings: true,
+    id: 'contact', kicker: 'Stop 5 · Beacon', title: 'Say hello',
+    body: 'Want a site for your business, or curious about anything you flew past? Send an email and you will hear back from a real person.',
+    points: ['Free homepage mockup, no commitment', 'Remote, US-wide'],
+    links: [{ label: 'cooperfeatherstonellc@gmail.com', href: 'mailto:cooperfeatherstonellc@gmail.com' }, { label: 'Get a free mockup', href: '#mockup' }],
+    accent: '#b9bcff',
   },
 ]

@@ -1,5 +1,5 @@
 import SpaceFlight from '@/components/SpaceFlight'
-import { stations } from '@/data/stations'
+import { stops } from '@/data/stations'
 import SampleMockups from '@/components/SampleMockups'
 import MockupForm from '@/components/MockupForm'
 
@@ -55,65 +55,41 @@ export default function Home() {
     <div className="relative min-h-screen text-[#eceae4]">
       <SpaceFlight />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black">Skip to content</a>
-      <header className="sticky top-0 z-30 border-b border-white/5 bg-[#05040a]/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-8">
-          <a href="#main" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
-          <nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
-            <a href="#fleet" className="hover:text-white">Projects</a>
+      <header className="fixed inset-x-0 top-0 z-30 border-b border-white/5 bg-[#05040a]/60 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-x-3 px-4 py-3 sm:px-8 sm:py-4 sm:px-8">
+          <a href="#main" className="whitespace-nowrap text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
+          <nav aria-label="Main" className="flex gap-x-3 text-xs text-white/80 sm:gap-x-5 sm:text-sm">
+            <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
             <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
-            <a href="#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>
+            <a href="#mockup" className="whitespace-nowrap font-semibold text-white underline underline-offset-4">Free mockup</a>
           </nav>
         </div>
       </header>
 
       <main id="main" className="relative z-10">
-        <section aria-labelledby="hero-title" className="flex min-h-[92svh] flex-col justify-center px-5 sm:px-8">
-          <div className="mx-auto w-full max-w-6xl">
-            <p className="kicker">CF LLC · Websites, software and experiments</p>
-            <h1 id="hero-title" className="display-title mt-6 max-w-4xl text-5xl text-white sm:text-7xl lg:text-8xl">
-              A small studio with a <span className="space-grad">whole fleet</span> in orbit.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-white/85">
-              Scroll to fly past every live product and the private tools behind them. Need a site of your own? Starter Sites from $499 setup + $39/mo, live in about a week.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#fleet" className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white">Start the flight ↓</a>
-              <a href="#mockup" className="rounded-md border border-white/50 px-6 py-3 font-semibold text-white hover:border-white">Get a free mockup</a>
-            </div>
-          </div>
-        </section>
-
-        <div id="fleet" className="scroll-mt-16">
-          <h2 className="sr-only">Projects</h2>
-          {stations.map((s, i) => (
-            <section key={s.id} id={`stop-${s.id}`} aria-labelledby={`t-${s.id}`} className="flex min-h-[100svh] items-end px-5 pb-16 sm:items-center sm:px-8 sm:pb-0">
-              <div className={`mx-auto flex w-full max-w-6xl ${i % 2 ? 'sm:justify-end' : 'sm:justify-start'}`}>
-                <article className="stop-card w-full max-w-md" style={{ ['--accent' as string]: s.accent }}>
-                  <div className="orb" aria-hidden="true" style={{ background: `radial-gradient(circle at 32% 30%, ${s.accent}, ${s.color} 45%, #05040a 78%)` }} />
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: s.accent }}>Stop {i + 1} · {s.kicker}</p>
-                  <h3 id={`t-${s.id}`} className="mt-3 text-4xl text-white sm:text-5xl">{s.name}</h3>
-                  <p className="mt-4 leading-7 text-white/85">{s.blurb}</p>
-                  <ul className="mt-4 space-y-1.5 text-white/80">
-                    {s.points.map((p) => <li key={p} className="flex gap-2"><span aria-hidden="true" style={{ color: s.accent }}>✦</span>{p}</li>)}
-                  </ul>
-                  {s.url ? (
-                    <a href={s.url} className="mt-6 inline-block rounded-md px-5 py-2.5 font-semibold text-[#070708]" style={{ background: s.accent }}>{s.cta} →</a>
-                  ) : (
-                    <p className="mt-6 inline-block rounded-md border border-white/20 px-4 py-2 text-sm text-white/75">Private · not publicly accessible</p>
-                  )}
-                </article>
-              </div>
+        <div id="flight">
+          <h1 className="sr-only">CF LLC: a flight through the projects of a small studio</h1>
+          {stops.map((s, i) => (
+            <section key={s.id} id={`stop-${s.id}`} aria-labelledby={`t-${s.id}`} className="stop">
+              <article data-stop-card className="stop-card" style={{ ['--accent' as string]: s.accent }}>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em]" style={{ color: s.accent }}>{s.kicker}</p>
+                <h2 id={`t-${s.id}`} className={`mt-2 text-white sm:mt-3 ${i === 0 ? 'text-5xl sm:text-8xl' : 'text-4xl sm:text-6xl'}`}>{s.title}</h2>
+                <p className="mt-3 text-sm leading-6 text-white/85 sm:mt-4 sm:text-base sm:leading-7">{s.body}</p>
+                <ul className="mt-3 space-y-1.5 text-[13px] leading-5 text-white/80 sm:mt-4 sm:space-y-2 sm:text-[15px]">
+                  {s.points.map((p) => <li key={p} className="flex gap-2"><span aria-hidden="true" style={{ color: s.accent }}>✦</span><span>{p}</span></li>)}
+                </ul>
+                {s.links && (
+                  <div className="mt-4 flex flex-wrap gap-2 sm:mt-6 sm:gap-3">
+                    {s.links.map((l, k) => (
+                      <a key={l.href} href={l.href} className={k === 0 ? 'stop-btn' : 'stop-btn-ghost'}>{l.label}{k === 0 ? ' →' : ''}</a>
+                    ))}
+                  </div>
+                )}
+                {i === 0 && <p className="scroll-hint mt-4 sm:mt-8 text-sm text-white/60" aria-hidden="true">Scroll to fly ↓</p>}
+              </article>
             </section>
           ))}
-          <section aria-labelledby="also-title" className="flex min-h-[60svh] items-center px-5 sm:px-8">
-            <div className="mx-auto w-full max-w-6xl text-center">
-              <h3 id="also-title" className="display-title text-4xl text-white sm:text-5xl">Also in orbit</h3>
-              <p className="mx-auto mt-4 max-w-xl leading-7 text-white/80">
-                <a className="underline" href="https://blog.spockshop.com/">The SpockShop blog</a>, <a className="underline" href="https://spock-motivation.netlify.app/">Spock Motivation</a>, and dozens of repos drifting in the Outer Darkness. <a className="underline" href="/ecosystem">See them all on the map.</a>
-              </p>
-            </div>
-          </section>
         </div>
 
         <div className="relative">
