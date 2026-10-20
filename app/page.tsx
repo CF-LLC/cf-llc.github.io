@@ -1,4 +1,5 @@
-import ProjectsSection from '@/components/ProjectsSection'
+import SpaceFlight from '@/components/SpaceFlight'
+import { stations } from '@/data/stations'
 import SampleMockups from '@/components/SampleMockups'
 import MockupForm from '@/components/MockupForm'
 
@@ -51,33 +52,72 @@ const faqs = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-[#eceae4]">
+    <div className="relative min-h-screen text-[#eceae4]">
+      <SpaceFlight />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black">Skip to content</a>
-      <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8">
-        <a href="#main" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
-        <nav aria-label="Main" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
-          <a href="#packages" className="hover:text-white">Packages</a>
-          <a href="#samples" className="hover:text-white">Samples</a>
-          <a href="#faq" className="hover:text-white">FAQ</a>
-          <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
-          <a href="#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>
-        </nav>
+      <header className="sticky top-0 z-30 border-b border-white/5 bg-[#05040a]/60 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-8">
+          <a href="#main" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
+          <nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-white/80">
+            <a href="#fleet" className="hover:text-white">Projects</a>
+            <a href="#packages" className="hover:text-white">Packages</a>
+            <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
+            <a href="#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>
+          </nav>
+        </div>
       </header>
 
-      <main id="main">
-        <section aria-labelledby="hero-title" className="mx-auto max-w-6xl px-5 pb-20 pt-10 sm:px-8 sm:pt-16">
-          <p className="kicker">Web services for small businesses · Remote, US-wide</p>
-          <h1 id="hero-title" className="display-title mt-6 max-w-4xl text-5xl text-white sm:text-7xl">Websites for small businesses, live in a week.</h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-white/80">
-            A clean, mobile-friendly site that tells customers what you do and how to reach you. Starter Sites from $499 setup + $39/mo, hosting and updates included.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a href="#mockup" className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white">Get a free homepage mockup</a>
-            <a href="#packages" className="rounded-md border border-white/50 px-6 py-3 font-semibold text-white hover:border-white">See packages</a>
+      <main id="main" className="relative z-10">
+        <section aria-labelledby="hero-title" className="flex min-h-[92svh] flex-col justify-center px-5 sm:px-8">
+          <div className="mx-auto w-full max-w-6xl">
+            <p className="kicker">CF LLC · Websites, software and experiments</p>
+            <h1 id="hero-title" className="display-title mt-6 max-w-4xl text-5xl text-white sm:text-7xl lg:text-8xl">
+              A small studio with a <span className="space-grad">whole fleet</span> in orbit.
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-white/85">
+              Scroll to fly past every live product and the private tools behind them. Need a site of your own? Starter Sites from $499 setup + $39/mo, live in about a week.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a href="#fleet" className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white">Start the flight ↓</a>
+              <a href="#mockup" className="rounded-md border border-white/50 px-6 py-3 font-semibold text-white hover:border-white">Get a free mockup</a>
+            </div>
           </div>
         </section>
 
-        <section id="packages" aria-labelledby="packages-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+        <div id="fleet" className="scroll-mt-16">
+          <h2 className="sr-only">Projects</h2>
+          {stations.map((s, i) => (
+            <section key={s.id} id={`stop-${s.id}`} aria-labelledby={`t-${s.id}`} className="flex min-h-[100svh] items-end px-5 pb-16 sm:items-center sm:px-8 sm:pb-0">
+              <div className={`mx-auto flex w-full max-w-6xl ${i % 2 ? 'sm:justify-end' : 'sm:justify-start'}`}>
+                <article className="stop-card w-full max-w-md" style={{ ['--accent' as string]: s.accent }}>
+                  <div className="orb" aria-hidden="true" style={{ background: `radial-gradient(circle at 32% 30%, ${s.accent}, ${s.color} 45%, #05040a 78%)` }} />
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: s.accent }}>Stop {i + 1} · {s.kicker}</p>
+                  <h3 id={`t-${s.id}`} className="mt-3 text-4xl text-white sm:text-5xl">{s.name}</h3>
+                  <p className="mt-4 leading-7 text-white/85">{s.blurb}</p>
+                  <ul className="mt-4 space-y-1.5 text-white/80">
+                    {s.points.map((p) => <li key={p} className="flex gap-2"><span aria-hidden="true" style={{ color: s.accent }}>✦</span>{p}</li>)}
+                  </ul>
+                  {s.url ? (
+                    <a href={s.url} className="mt-6 inline-block rounded-md px-5 py-2.5 font-semibold text-[#070708]" style={{ background: s.accent }}>{s.cta} →</a>
+                  ) : (
+                    <p className="mt-6 inline-block rounded-md border border-white/20 px-4 py-2 text-sm text-white/75">Private · not publicly accessible</p>
+                  )}
+                </article>
+              </div>
+            </section>
+          ))}
+          <section aria-labelledby="also-title" className="flex min-h-[60svh] items-center px-5 sm:px-8">
+            <div className="mx-auto w-full max-w-6xl text-center">
+              <h3 id="also-title" className="display-title text-4xl text-white sm:text-5xl">Also in orbit</h3>
+              <p className="mx-auto mt-4 max-w-xl leading-7 text-white/80">
+                <a className="underline" href="https://blog.spockshop.com/">The SpockShop blog</a>, <a className="underline" href="https://spock-motivation.netlify.app/">Spock Motivation</a>, and dozens of repos drifting in the Outer Darkness. <a className="underline" href="/ecosystem">See them all on the map.</a>
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <div className="relative">
+        <section id="packages" aria-labelledby="packages-title" className="scroll-mt-6 border-t border-white/10 bg-[#0b0a12]/85 backdrop-blur-sm">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
             <p className="kicker">Packages</p>
             <h2 id="packages-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Simple, upfront pricing</h2>
@@ -101,7 +141,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="process" aria-labelledby="process-title" className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+        <section id="process" aria-labelledby="process-title" className="bg-[#07060c]/80 mx-auto max-w-6xl px-5 py-20 sm:px-8">
           <p className="kicker">How it works</p>
           <h2 id="process-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Mockup, approve, launch</h2>
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
@@ -115,7 +155,7 @@ export default function Home() {
           </ol>
         </section>
 
-        <section id="samples" aria-labelledby="samples-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+        <section id="samples" aria-labelledby="samples-title" className="scroll-mt-6 border-t border-white/10 bg-[#0b0a12]/85 backdrop-blur-sm">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
             <p className="kicker">Proof</p>
             <h2 id="samples-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Before &amp; after samples</h2>
@@ -130,16 +170,16 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="mockup" aria-labelledby="mockup-title" className="scroll-mt-6 mx-auto grid max-w-6xl gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2">
+        <section id="mockup" aria-labelledby="mockup-title" className="scroll-mt-6 bg-[#07060c]/80"><div className="mx-auto grid max-w-6xl gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2">
           <div>
             <p className="kicker">Free, no commitment</p>
             <h2 id="mockup-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Get a free homepage mockup</h2>
             <p className="mt-4 leading-7 text-white/80">Tell me your business and current site (if any). I&apos;ll email you a homepage mockup so you can decide with something real in front of you.</p>
           </div>
           <MockupForm />
-        </section>
+        </div></section>
 
-        <section id="faq" aria-labelledby="faq-title" className="scroll-mt-6 border-t border-white/10 bg-[#0d0d10]">
+        <section id="faq" aria-labelledby="faq-title" className="scroll-mt-6 border-t border-white/10 bg-[#0b0a12]/85 backdrop-blur-sm">
           <div className="mx-auto max-w-3xl px-5 py-20 sm:px-8">
             <p className="kicker">FAQ</p>
             <h2 id="faq-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Common questions</h2>
@@ -154,14 +194,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="work" aria-labelledby="work-title" className="scroll-mt-6 mx-auto max-w-6xl px-5 py-20 sm:px-8">
-          <ProjectsSection />
-        </section>
+        </div>
       </main>
 
-      <footer className="border-t border-white/10">
+      <footer className="relative z-10 border-t border-white/10 bg-[#05040a]/90">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
-          <p>CF LLC, 2510 NW Turner Dr, Bentonville, AR 72712</p>
+          <p>CF LLC · Remote, serving small businesses across the US</p>
           <p><a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
         </div>
       </footer>
