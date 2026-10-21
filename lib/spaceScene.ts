@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-unused-vars, @typescript-eslint/no-unused-expressions */
 // @ts-nocheck -- three is bundled from npm; scene code is plain imperative three.js
 import * as THREE from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
@@ -6,7 +6,8 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
 
-export type SceneOpts = { canvas: HTMLCanvasElement; mobile: boolean; reduced: boolean; stopCount: number; getProgress: () => number; onReady: () => void }
+export type SceneOpts = { canvas: HTMLCanvasElement; mobile: boolean; reduced: boolean; stopCount: number; getProgress: () => number; onReady: () => void; onFrame?: (d: { f: number; speed: number; dpr: number }) => void; onLost?: () => void }
+let ZLEN = 1100
 
 // ---------- procedural textures ----------
 function rng(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647) }
@@ -84,7 +85,7 @@ function starLayer(count, spread, near, size, seed, mobile) {
   const tints = ['#ffffff', '#b9f3ff', '#ffd6f0', '#ffe9c7', '#c9c4ff'].map((h) => new THREE.Color(h))
   for (let i = 0; i < count; i++) {
     const a = r() * Math.PI * 2, d = near + r() * spread
-    pos[i * 3] = Math.cos(a) * d; pos[i * 3 + 1] = Math.sin(a) * d * 0.8; pos[i * 3 + 2] = 120 - r() * 1100
+    pos[i * 3] = Math.cos(a) * d; pos[i * 3 + 1] = Math.sin(a) * d * 0.8; pos[i * 3 + 2] = 160 - r() * ZLEN
     const c = tints[Math.floor(r() * tints.length)]; col.set([c.r, c.g, c.b], i * 3); ph[i] = r() * 6.28
   }
   const g = new THREE.BufferGeometry()
@@ -181,219 +182,302 @@ function wormhole(o) {
   return g
 }
 
+// ---------- extra builders (v3) ----------
+function rimGlow(color, radius, power = 4.0, strength = 0.9) {
+  const m = new THREE.ShaderMaterial({
+    uniforms: { c: { value: new THREE.Color(color) }, p: { value: power }, s: { value: strength } },
+    vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix*mv; }',
+    fragmentShader: 'uniform vec3 c; uniform float p; uniform float s; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - max(dot(vN, vV),0.0), p); gl_FragColor = vec4(c*f*s, f); }',
+    blending: THREE.AdditiveBlending, side: THREE.FrontSide, transparent: true, depthWrite: false,
+  })
+  return new THREE.Mesh(new THREE.SphereGeometry(radius * 1.015, 64, 48), m)
+}
+function asteroidGeo(seed, detail) {
+  const g = new THREE.IcosahedronGeometry(1, detail), p = g.attributes.position, v = new THREE.Vector3(), n = makeNoise(seed)
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i)
+    const d = 1 + n(v.x * 1.7 + 3, v.y * 1.7 + v.z, 3) * 0.7 + n(v.z * 4, v.x * 4 - v.y, 2) * 0.18
+    v.multiplyScalar(d); v.y *= 0.8; p.setXYZ(i, v.x, v.y, v.z)
+  }
+  g.computeVertexNormals(); return g
+}
+
 // ---------- main ----------
 export function startScene(o: SceneOpts) {
   const { canvas, mobile, reduced } = o
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' })
-  const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.3 : 1.75)
+  const maxDpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75)
+  let dpr = mobile ? Math.min(1.2, maxDpr) : maxDpr
   renderer.setPixelRatio(dpr); renderer.setSize(window.innerWidth, window.innerHeight, false)
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.9
-  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x03020a); scene.fog = new THREE.FogExp2(0x03020a, 0.0022)
-  const camera = new THREE.PerspectiveCamera(mobile ? 68 : 55, window.innerWidth / window.innerHeight, 0.1, 2000)
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95
+  let lost = false
+  const onLost = (e) => { e.preventDefault(); lost = true; running = false; cancelAnimationFrame(raf); o.onLost && o.onLost() }
+  canvas.addEventListener('webglcontextlost', onLost)
 
-  scene.add(new THREE.AmbientLight(0x40406a, 0.6))
-  const key = new THREE.DirectionalLight(0xfff0d8, 2.4); key.position.set(-60, 30, 60); scene.add(key)
-  const rim = new THREE.DirectionalLight(0x7f8cff, 1.0); rim.position.set(60, -20, -80); scene.add(rim)
+  const N = o.stopCount, GAP = 240
+  ZLEN = N * GAP + 700
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x02010a); scene.fog = new THREE.FogExp2(0x02010a, 0.0014)
+  const camera = new THREE.PerspectiveCamera(mobile ? 72 : 60, window.innerWidth / window.innerHeight, 0.1, 4000)
+  scene.add(new THREE.AmbientLight(0x2c2c55, 0.55))
+  const key = new THREE.DirectionalLight(0xfff0d8, 2.8); key.position.set(-50, 40, 80); scene.add(key)
+  const rim = new THREE.DirectionalLight(0x7f8cff, 1.3); rim.position.set(70, -20, -90); scene.add(rim)
 
-  // Flight path: stops along -z, swinging left/right.
-  const N = o.stopCount, GAP = 150
-  const viewPts = [], objPts = []
-  for (let i = 0; i < N; i++) {
-    const x = (i % 2 ? -1 : 1) * 18, z = -i * GAP
-    viewPts.push(new THREE.Vector3(x * 0.2, Math.sin(i) * 6 + 4, z + 78))
-    objPts.push(new THREE.Vector3(x, Math.sin(i) * 6, z))
+  // Stops: planets laid out along a winding route.
+  const R = [9, 16, 13, 11, 10]
+  const objPts = [], viewPts = [], targets = []
+  const portrait = () => window.innerWidth / window.innerHeight < 0.9
+  for (let i = 0; i < N; i++) objPts.push(new THREE.Vector3(Math.sin(i * 1.9) * 70, Math.cos(i * 1.3) * 22, -i * GAP))
+  function layoutViews() {
+    viewPts.length = 0; targets.length = 0
+    for (let i = 0; i < N; i++) {
+      const P = objPts[i], r = R[i] || 10
+      if (portrait()) { viewPts.push(P.clone().add(new THREE.Vector3(r * 0.3, r * 0.15, r * 4.6))); targets.push(P.clone().add(new THREE.Vector3(0, -r * 1.05, 0))) }
+      else { viewPts.push(P.clone().add(new THREE.Vector3(-r * 1.0, r * 0.2, r * 3.4))); targets.push(P.clone().add(new THREE.Vector3(-r * 1.15, 0, 0))) }
+    }
   }
-  const ctrl = []
-  for (let i = 0; i < N; i++) {
-    ctrl.push(viewPts[i])
-    if (i < N - 1) ctrl.push(new THREE.Vector3((i % 2 ? 1 : -1) * 10, 30, (viewPts[i].z + viewPts[i + 1].z) / 2))
+  layoutViews()
+  let curve
+  function buildCurve() {
+    const ctrl = []
+    for (let i = 0; i < N; i++) {
+      ctrl.push(viewPts[i])
+      if (i < N - 1) {
+        const a = viewPts[i], b = viewPts[i + 1], s = i % 2 ? 1 : -1
+        ctrl.push(new THREE.Vector3().lerpVectors(a, b, 0.33).add(new THREE.Vector3(s * 60, 18 * s, 0)))
+        ctrl.push(new THREE.Vector3().lerpVectors(a, b, 0.66).add(new THREE.Vector3(-s * 45, -14 * s, 0)))
+      }
+    }
+    curve = new THREE.CatmullRomCurve3(ctrl, false, 'catmullrom', 0.5)
   }
-  const curve = new THREE.CatmullRomCurve3(ctrl, false, 'catmullrom', 0.5)
+  buildCurve()
 
-  // Starfield: three layers for parallax depth.
+  // Starfield + nebulae.
   const layers = mobile
-    ? [starLayer(900, 60, 30, 1.0, 1, mobile), starLayer(700, 220, 90, 1.6, 2, mobile), starLayer(250, 400, 260, 3.2, 3, mobile)]
-    : [starLayer(4000, 60, 30, 0.8, 1, mobile), starLayer(2600, 220, 90, 1.4, 2, mobile), starLayer(700, 400, 260, 3.0, 3, mobile)]
-  layers.forEach((l, i) => { l.userData.par = [0.0, 0.25, 0.55][i]; scene.add(l) })
-
-  // Nebulae: stacked noisy sprites read as volume.
+    ? [starLayer(1200, 160, 4, 1.0, 1, mobile), starLayer(900, 260, 120, 1.7, 2, mobile), starLayer(350, 500, 380, 3.4, 3, mobile)]
+    : [starLayer(5000, 160, 4, 0.8, 1, mobile), starLayer(3000, 260, 120, 1.4, 2, mobile), starLayer(900, 500, 380, 3.0, 3, mobile)]
+  layers.forEach((l, i) => { l.userData.par = [0.0, 0.3, 0.6][i]; scene.add(l) })
   const nebCols = ['#c43b72', '#4aa8b8', '#7a4de0', '#e0823c', '#ff7ad9']
   const nebTex = nebCols.map((c, i) => nebulaTex(100 + i, c))
   const nebs = [], nr = rng(7)
-  for (let i = 0; i < (mobile ? 14 : 34); i++) {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: nebTex[i % nebTex.length], transparent: true, opacity: 0.16 + nr() * 0.2, depthWrite: false, blending: THREE.AdditiveBlending }))
-    const k = 120 + nr() * 260; s.scale.set(k, k * (0.6 + nr() * 0.6), 1)
-    s.material.rotation = nr() * 6.28
-    const zi = Math.floor(nr() * N)
-    s.position.set((nr() - 0.5) * 420, (nr() - 0.5) * 220, -zi * GAP - 120 - nr() * 160)
-    s.userData.rs = (nr() - 0.5) * 0.02; scene.add(s); nebs.push(s)
+  for (let i = 0; i < (mobile ? 16 : 36); i++) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: nebTex[i % nebTex.length], transparent: true, opacity: 0.18 + nr() * 0.22, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }))
+    const k = 160 + nr() * 320; s.scale.set(k, k * (0.6 + nr() * 0.6), 1); s.material.rotation = nr() * 6.28
+    s.position.set((nr() - 0.5) * 520, (nr() - 0.5) * 260, 100 - nr() * (ZLEN + 200)); s.userData.rs = (nr() - 0.5) * 0.02; scene.add(s); nebs.push(s)
   }
 
-  // Stops.
+  // Bodies.
+  const icy = planet({ r: R[3], seed: 31, kind: 'rock', palette: [[0, '#061a26'], [0.4, '#1d5a66'], [0.55, '#4fb39a'], [0.75, '#b8e8da'], [1, '#e8fff6']], glow: '#a6ffd9', mobile, spin: 0.05 })
+  const cons = constellation({ r: 34 }); cons.userData.body = null
+  const ecoGroup = new THREE.Group(); ecoGroup.add(icy, cons); ecoGroup.userData = {}
   const objs = [
-    sun({ r: 9 }),
-    planet({ r: 14, seed: 4, kind: 'gas', palette: [[0, '#2a0f3d'], [0.35, '#8a2c7a'], [0.6, '#ff7ad9'], [0.8, '#ffd27a'], [1, '#fff1f8']], glow: '#ff7ad9', rings: [255, 200, 235], mobile, spin: 0.04 }),
-    planet({ r: 13, seed: 9, kind: 'rock', palette: [[0, '#06204a'], [0.46, '#0f5ea8'], [0.5, '#2f9bd6'], [0.52, '#d8c48a'], [0.6, '#3d8a3a'], [0.78, '#2b5e2a'], [0.9, '#8a8a8a'], [1, '#ffffff']], glow: '#7fe3ff', clouds: true, mobile, spin: 0.06 }),
-    constellation({ r: 22 }),
-    wormhole({ r: 11 }),
-  ]
+    sun({ r: R[0] }),
+    planet({ r: R[1], seed: 4, kind: 'gas', palette: [[0, '#2a0f3d'], [0.35, '#8a2c7a'], [0.6, '#ff7ad9'], [0.8, '#ffd27a'], [1, '#fff1f8']], glow: '#ff7ad9', rings: [255, 200, 235], mobile, spin: 0.05 }),
+    planet({ r: R[2], seed: 9, kind: 'rock', palette: [[0, '#06204a'], [0.46, '#0f5ea8'], [0.5, '#2f9bd6'], [0.52, '#d8c48a'], [0.6, '#3d8a3a'], [0.78, '#2b5e2a'], [0.9, '#8a8a8a'], [1, '#ffffff']], glow: '#7fe3ff', clouds: true, mobile, spin: 0.07 }),
+    ecoGroup,
+    wormhole({ r: R[4] }),
+  ].slice(0, N)
+  objs[1] && objs[1].add(rimGlow('#ff9ae6', R[1]))
+  objs[2] && objs[2].add(rimGlow('#9fe9ff', R[2] * 1.02))
+  icy.add(rimGlow('#c8ffee', R[3]))
   objs.forEach((g, i) => { g.position.copy(objPts[i]); scene.add(g) })
-  // Satellites around SaaS Nation: Funnel Maker station and InvoiceForge moon.
   const fm = station({ r: 4.2, accent: '#ff7ad9', mobile }); scene.add(fm)
-  const invoice = planet({ r: 2.6, seed: 21, kind: 'rock', palette: [[0, '#2b2a3a'], [0.5, '#9a96b8'], [1, '#e8e4ff']], glow: '#b9bcff', mobile, spin: 0.1 }); scene.add(invoice)
-  // Station near SpockShop for orbiting traffic.
-  const shopStation = station({ r: 2.4, accent: '#7fe3ff', mobile }); scene.add(shopStation)
-  const hoverables = [...objs, fm, invoice, shopStation]
-  // Moving lights orbiting the big bodies.
+  const invoice = planet({ r: 2.8, seed: 21, kind: 'rock', palette: [[0, '#2b2a3a'], [0.5, '#9a96b8'], [1, '#e8e4ff']], glow: '#b9bcff', mobile, spin: 0.1 }); scene.add(invoice)
+  const shopStation = station({ r: 2.6, accent: '#7fe3ff', mobile }); scene.add(shopStation)
+  const spinners = [...objs, icy, fm, invoice, shopStation]
   const orbitLights = []
-  ;[1, 2, 4].forEach((idx, k) => {
-    const L = new THREE.PointLight(['#ff7ad9', '#7fe3ff', '#b9bcff'][k], 600, 80, 2)
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(['#ff7ad9', '#7fe3ff', '#b9bcff'][k]).multiplyScalar(3) }))
-    L.add(bulb); scene.add(L); orbitLights.push({ L, c: objPts[idx], r: [24, 20, 16][k], s: [0.5, 0.7, 0.9][k] })
+  ;[1, 2, 4].filter((i) => i < N).forEach((idx, k) => {
+    const col = ['#ff7ad9', '#7fe3ff', '#b9bcff'][k]
+    const L = new THREE.PointLight(col, 300, 70, 2)
+    L.add(new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(col).multiplyScalar(3) })))
+    scene.add(L); orbitLights.push({ L, c: objPts[idx], r: [28, 22, 18][k], s: [0.5, 0.7, 0.9][k] })
   })
 
-  // Warp streaks: line segments around the camera, stretched by speed.
-  const SN = mobile ? 160 : 420, sPos = new Float32Array(SN * 6), sSeed = []
-  const sr = rng(5); for (let i = 0; i < SN; i++) { const a = sr() * 6.28, d = 3 + sr() * 26; sSeed.push([Math.cos(a) * d, Math.sin(a) * d * 0.7, -sr() * 160]) }
+  // Asteroid belts hugging the flight path, some passing within a few metres of the camera.
+  const AN = mobile ? 280 : 760
+  const aMat = new THREE.MeshStandardMaterial({ color: 0x8a8090, roughness: 0.95, metalness: 0.05, flatShading: true })
+  const aGeos = [asteroidGeo(3, 1), asteroidGeo(8, 1), asteroidGeo(13, mobile ? 1 : 2)]
+  const aMeshes = aGeos.map((g) => new THREE.InstancedMesh(g, aMat, Math.ceil(AN / 3)))
+  const aData = [], ar = rng(99), tv = new THREE.Vector3(), nv = new THREE.Vector3()
+  const tint = [new THREE.Color('#9a8f86'), new THREE.Color('#6f6a80'), new THREE.Color('#a68a6e'), new THREE.Color('#5d6f7a')]
+  for (let k = 0; k < AN; k++) {
+    const mi = k % 3, idx = Math.floor(k / 3); let pos, tries = 0
+    do {
+      const u = ar(); curve.getPoint(u, tv)
+      const close = ar() < 0.35, d = close ? 3 + ar() * 10 : 14 + ar() * ar() * 120, a = ar() * 6.28
+      nv.set(Math.cos(a) * d, Math.sin(a) * d * 0.7, (ar() - 0.5) * 30); pos = tv.clone().add(nv); tries++
+    } while (tries < 8 && objPts.some((P, i) => P.distanceTo(pos) < (R[i] || 10) * 2.2) || viewPts.some((V) => V.distanceTo(pos) < 6))
+    const near = pos.distanceTo(tv) < 14, s = near ? 0.25 + ar() * 1.1 : 0.8 + ar() * ar() * 6
+    aData.push({ m: mi, i: idx, p: pos, s: new THREE.Vector3(s * (0.7 + ar() * 0.6), s * (0.7 + ar() * 0.6), s), r: new THREE.Euler(ar() * 6, ar() * 6, ar() * 6), w: new THREE.Vector3((ar() - 0.5) * 1.2, (ar() - 0.5) * 1.2, (ar() - 0.5) * 1.2), drift: new THREE.Vector3((ar() - 0.5) * 0.8, (ar() - 0.5) * 0.4, (ar() - 0.5) * 0.8) })
+    aMeshes[mi].setColorAt(idx, tint[k % tint.length])
+  }
+  aMeshes.forEach((m) => { m.instanceColor.needsUpdate = true; m.frustumCulled = false; scene.add(m) })
+  const mtx = new THREE.Matrix4(), qa = new THREE.Quaternion(), pa = new THREE.Vector3()
+  function updateAsteroids(t, dt) {
+    for (const a of aData) {
+      a.r.x += a.w.x * dt; a.r.y += a.w.y * dt; a.r.z += a.w.z * dt
+      pa.copy(a.p).addScaledVector(a.drift, Math.sin(t * 0.1) * 6)
+      mtx.compose(pa, qa.setFromEuler(a.r), a.s); aMeshes[a.m].setMatrixAt(a.i, mtx)
+    }
+    aMeshes.forEach((m) => (m.instanceMatrix.needsUpdate = true))
+  }
+
+  // World-space space dust that streams past the camera (always moving, even when parked).
+  const DN = mobile ? 500 : 1400, dPos = new Float32Array(DN * 3)
+  const dGeo = new THREE.BufferGeometry(); dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3))
+  const dust = new THREE.Points(dGeo, new THREE.PointsMaterial({ size: mobile ? 0.16 : 0.12, map: softDot('#ffffff', 32), color: new THREE.Color(1.6, 1.7, 2.0), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true }))
+  dust.frustumCulled = false; scene.add(dust)
+  let dustInit = false
+  const fwd = new THREE.Vector3(), rel = new THREE.Vector3()
+  function spawnDust(i, cam, ahead) {
+    const z = ahead ? 40 + Math.random() * 40 : Math.random() * 80
+    const x = (Math.random() - 0.5) * 50, y = (Math.random() - 0.5) * 34
+    rel.set(x, y, -z).applyQuaternion(cam.quaternion).add(cam.position); dPos.set([rel.x, rel.y, rel.z], i * 3)
+  }
+
+  // Warp streaks attached to the camera.
+  const SN = mobile ? 180 : 460, sPos = new Float32Array(SN * 6), sSeed = []
+  const sr = rng(5); for (let i = 0; i < SN; i++) { const a = sr() * 6.28, d = 2.5 + sr() * 24; sSeed.push([Math.cos(a) * d, Math.sin(a) * d * 0.7, -sr() * 160]) }
   const sGeo = new THREE.BufferGeometry(); sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3))
-  const streaks = new THREE.LineSegments(sGeo, new THREE.LineBasicMaterial({ color: 0xbfe9ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }))
+  const streaks = new THREE.LineSegments(sGeo, new THREE.LineBasicMaterial({ color: 0xbfe9ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }))
   streaks.frustumCulled = false; camera.add(streaks); scene.add(camera)
 
-  // Cursor-reactive sparkles.
-  const PN = mobile ? 60 : 160, pPos = new Float32Array(PN * 3), pLife = new Float32Array(PN), pVel = []
-  for (let i = 0; i < PN; i++) { pVel.push(new THREE.Vector3()); pPos[i * 3 + 2] = -9999 }
-  const pGeo = new THREE.BufferGeometry(); pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
-  const sparks = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.5, map: softDot('#ffffff', 64), color: new THREE.Color(2, 1.6, 2.4), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }))
-  sparks.frustumCulled = false; scene.add(sparks)
-  let pi = 0
-
-  // Post: bloom.
-  let composer = null, bloom = null
-  composer = new EffectComposer(renderer)
+  // Post.
+  const composer = new EffectComposer(renderer)
   composer.addPass(new RenderPass(scene, camera))
-  const bs = mobile ? 0.5 : 1
-  bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth * bs, window.innerHeight * bs), mobile ? 0.55 : 0.75, 0.45, 0.55)
+  const bs = mobile ? 0.5 : 0.85
+  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth * bs, window.innerHeight * bs), mobile ? 0.6 : 0.8, 0.5, 0.55)
   composer.addPass(bloom); composer.addPass(new OutputPass())
+  composer.setPixelRatio(dpr)
   layers.forEach((l) => (l.material.uniforms.px.value = dpr))
 
-  // Input.
-  const mouse = new THREE.Vector2(), smooth = new THREE.Vector2(), ray = new THREE.Raycaster(); let hasPointer = false, lastSpawn = 0
-  const onMove = (e) => { const p = e.touches ? e.touches[0] : e; mouse.set((p.clientX / window.innerWidth) * 2 - 1, -(p.clientY / window.innerHeight) * 2 + 1); hasPointer = true }
-  window.addEventListener('pointermove', onMove, { passive: true }); window.addEventListener('touchmove', onMove, { passive: true })
+  // Look-around: mouse on desktop, gyro on phones (enabled by the component after a tap on iOS).
+  const look = new THREE.Vector2(), lookS = new THREE.Vector2()
+  const onMove = (e) => { if (e.pointerType === 'touch') return; look.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1) }
+  window.addEventListener('pointermove', onMove, { passive: true })
+  let g0 = null
+  const onOri = (e) => {
+    if (e.beta == null || e.gamma == null) return
+    if (!g0) g0 = { b: e.beta, g: e.gamma }
+    look.set(Math.max(-1, Math.min(1, (e.gamma - g0.g) / 30)), Math.max(-1, Math.min(1, -(e.beta - g0.b) / 30)))
+    g0.b += (e.beta - g0.b) * 0.004; g0.g += (e.gamma - g0.g) * 0.004 // slowly re-centre
+  }
+  window.addEventListener('deviceorientation', onOri)
   const onResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight, false); composer.setSize(window.innerWidth, window.innerHeight)
     bloom.resolution.set(window.innerWidth * bs, window.innerHeight * bs)
+    layoutViews(); buildCurve()
   }
   window.addEventListener('resize', onResize)
 
-  let prog = o.getProgress(), lastProg = prog, speed = 0, running = true, raf = 0, ready = false
-  const clock = new THREE.Clock(), tmp = new THREE.Vector3(), look = new THREE.Vector3(), lookS = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0)
-  const ease = (f) => 0.5 - 0.5 * Math.cos(Math.PI * f)
-
-  function place(p, dt, t) {
-    const seg = Math.min(N - 2, Math.floor(p * (N - 1))), f = Math.min(1, p * (N - 1) - seg), e = ease(f)
-    const u = (seg + e) / (N - 1)
-    curve.getPoint(u, tmp)
-    camera.position.copy(tmp)
-    // Look at the object we are arriving at; offset so it sits beside the glass panel.
-    const a = objPts[seg], b = objPts[seg + 1]
-    look.lerpVectors(a, b, e)
-    const side = mobile ? new THREE.Vector3(0, -30, 0) : new THREE.Vector3(-26, 0, 0)
-    look.add(side)
-    if (dt === 0) lookS.copy(look); else lookS.lerp(look, 1 - Math.exp(-dt * 5))
-    // Parallax tilt.
-    camera.position.x += smooth.x * 3.5; camera.position.y += smooth.y * 2.2
-    camera.lookAt(lookS)
-    camera.rotation.z += -smooth.x * 0.03
+  const M = reduced ? { look: 0.45, bank: 0.35, idle: 0.25, rate: 2.2, fov: 0, streak: 0, dust: 0.35 } : { look: 1, bank: 1, idle: 1, rate: 3.4, fov: 1, streak: 1, dust: 1 }
+  let f = Math.min(N - 1, o.getProgress()), lastF = f, speed = 0, running = true, raf = 0, ready = false, roll = 0
+  const clock = new THREE.Clock(), pos = new THREE.Vector3(), ahead = new THREE.Vector3(), dirA = new THREE.Vector3(), dirB = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0)
+  const t1 = new THREE.Vector3(), t2 = new THREE.Vector3(), m4 = new THREE.Matrix4(), qBase = new THREE.Quaternion(), qOff = new THREE.Quaternion(), eOff = new THREE.Euler(0, 0, 0, 'YXZ'), qT = new THREE.Quaternion()
+  const smooth = (x) => x * x * (3 - 2 * x)
+  function uOf(fr) {
+    const seg = Math.min(N - 2, Math.floor(fr)), x = fr - seg
+    const k = Math.max(0, Math.min(1, (x - 0.1) / 0.8))
+    return (seg + smooth(k)) / (N - 1)
+  }
+  function pose(dt, t, snap) {
+    const u = uOf(f)
+    curve.getPoint(u, pos)
+    const near = Math.round(f), w = smooth(Math.max(0, 1 - Math.abs(f - near) / 0.42))
+    const ua = Math.min(1, u + 0.01)
+    if (ua > u) { curve.getPoint(ua, ahead); dirA.subVectors(ahead, pos).normalize() } else dirA.subVectors(targets[near], pos).normalize()
+    dirB.subVectors(targets[near], pos).normalize()
+    dirA.lerp(dirB, w).normalize()
+    // Bank into the curve: sign of the turn from the change in tangent.
+    curve.getTangent(Math.max(0, u - 0.004), t1); curve.getTangent(Math.min(1, u + 0.004), t2)
+    const turn = t1.x * t2.z - t1.z * t2.x
+    const want = Math.max(-0.55, Math.min(0.55, turn * 90)) * (1 - w) * M.bank
+    roll += (want - roll) * (snap ? 1 : 1 - Math.exp(-dt * 2.5))
+    pos.x += Math.sin(t * 0.37) * 0.7 * M.idle; pos.y += Math.sin(t * 0.53) * 0.45 * M.idle
+    camera.position.copy(pos)
+    m4.lookAt(pos, ahead.copy(pos).add(dirA), up); qBase.setFromRotationMatrix(m4)
+    lookS.lerp(look, snap ? 1 : 1 - Math.exp(-dt * 3))
+    eOff.set(lookS.y * 0.28 * M.look, -lookS.x * 0.42 * M.look, roll - lookS.x * 0.05 * M.look)
+    qT.copy(qBase).multiply(qOff.setFromEuler(eOff))
+    if (snap) camera.quaternion.copy(qT); else camera.quaternion.slerp(qT, 1 - Math.exp(-dt * 6))
   }
 
-  // ?capture=1: deterministic frame stepping for recording videos/screenshots on slow software GL.
   const capture = /[?&]capture=1/.test(location.search)
-  let simT = 0
+  let simT = 0, accT = 0, accN = 0
   function frame(forced?: number) {
-    if (!running) return
-    let dt = Math.min(clock.getDelta(), 0.05)
+    if (!running || lost) return
+    const real = clock.getDelta()
+    let dt = Math.min(real, 0.05)
     if (capture) { dt = typeof forced === 'number' ? forced : 1 / 30; simT += dt }
     const t = capture ? simT : clock.elapsedTime
-    const target = o.getProgress()
-    prog += (target - prog) * (1 - Math.exp(-dt * 3.2))
-    const v = Math.abs(prog - lastProg) / Math.max(dt, 1e-3); lastProg = prog
-    speed += (Math.min(1, v * 3) - speed) * (1 - Math.exp(-dt * 6))
-    smooth.lerp(hasPointer ? mouse : smooth.set(0, 0), 1 - Math.exp(-dt * 3))
-    place(prog, dt, t)
-    camera.fov = (mobile ? 68 : 55) + speed * 14; camera.updateProjectionMatrix()
+    const target = Math.min(N - 1, Math.max(0, o.getProgress()))
+    f += (target - f) * (1 - Math.exp(-dt * M.rate))
+    if (Math.abs(target - f) < 1e-4) f = target
+    const v = Math.abs(f - lastF) / Math.max(dt, 1e-3); lastF = f
+    speed += (Math.min(1, v * 1.6) - speed) * (1 - Math.exp(-dt * 5))
+    pose(dt, t, false)
+    camera.fov = (mobile ? 72 : 60) + speed * 22 * M.fov; camera.updateProjectionMatrix()
+    bloom.strength = (mobile ? 0.6 : 0.8) + speed * 0.5 * M.fov
 
-    // Animate bodies.
-    for (const g of hoverables) {
-      const u = g.userData
-      if (u.body && !u.wholeSpin) u.body.rotation.y += dt * u.spin
-      if (u.clouds) u.clouds.rotation.y += dt * u.spin * 1.4
-      if (u.spinGroup) { if (u.rings) u.rings.forEach((r, i) => (r.rotation.z += dt * (0.2 + i * 0.08) * (i % 2 ? -1 : 1))); else if (u.wholeSpin) u.spinGroup.rotation.y += dt * u.spin; else u.spinGroup.rotation.z += dt * u.spin }
-      if (u.beacons) u.beacons.forEach((b, i) => (b.visible = Math.sin(t * 4 + i * 1.7) > 0))
-      const s = u.baseScale * (1 + u.hover * 0.08); g.scale.lerp(tmp.set(s, s, s), 1 - Math.exp(-dt * 6))
-      if (u.body && u.body.material.emissiveIntensity !== undefined) u.body.material.emissiveIntensity = u.hover * 0.35
-      u.hover += ((u.hovered ? 1 : 0) - u.hover) * (1 - Math.exp(-dt * 8))
+    for (const g of spinners) {
+      const ud = g.userData
+      if (ud.body && !ud.wholeSpin) ud.body.rotation.y += dt * ud.spin
+      if (ud.clouds) ud.clouds.rotation.y += dt * ud.spin * 1.5
+      if (ud.spinGroup) { if (ud.rings) ud.rings.forEach((r, i) => (r.rotation.z += dt * (0.2 + i * 0.08) * (i % 2 ? -1 : 1))); else if (ud.wholeSpin) ud.spinGroup.rotation.y += dt * ud.spin; else ud.spinGroup.rotation.z += dt * ud.spin }
+      if (ud.beacons) ud.beacons.forEach((b, i) => (b.visible = Math.sin(t * 4 + i * 1.7) > 0))
     }
-    const sat = objPts[1]
-    fm.position.set(sat.x + Math.cos(t * 0.25) * 30, sat.y + 6 + Math.sin(t * 0.25) * 4, sat.z + Math.sin(t * 0.25) * 30); fm.lookAt(camera.position)
-    invoice.position.set(sat.x + Math.cos(t * 0.18 + 2.6) * 22, sat.y - 5, sat.z + Math.sin(t * 0.18 + 2.6) * 22)
-    const sp = objPts[2]; shopStation.position.set(sp.x + Math.cos(-t * 0.3) * 21, sp.y + Math.sin(t * 0.3) * 8, sp.z + Math.sin(-t * 0.3) * 21); shopStation.lookAt(camera.position)
+    cons.rotation.y += dt * 0.05
+    if (N > 1) { const s = objPts[1]; fm.position.set(s.x + Math.cos(t * 0.25) * 34, s.y + 6 + Math.sin(t * 0.25) * 5, s.z + Math.sin(t * 0.25) * 34); fm.lookAt(camera.position); invoice.position.set(s.x + Math.cos(t * 0.18 + 2.6) * 26, s.y - 6, s.z + Math.sin(t * 0.18 + 2.6) * 26) }
+    if (N > 2) { const s = objPts[2]; shopStation.position.set(s.x + Math.cos(-t * 0.3) * 22, s.y + Math.sin(t * 0.3) * 8, s.z + Math.sin(-t * 0.3) * 22); shopStation.lookAt(camera.position) }
     orbitLights.forEach((l) => l.L.position.set(l.c.x + Math.cos(t * l.s) * l.r, l.c.y + Math.sin(t * l.s * 1.3) * 6, l.c.z + Math.sin(t * l.s) * l.r))
-
-    layers.forEach((l) => { l.material.uniforms.t.value = t; l.position.x = -smooth.x * 10 * l.userData.par; l.position.y = -smooth.y * 6 * l.userData.par })
+    updateAsteroids(t, dt * (reduced ? 0.4 : 1))
+    layers.forEach((l) => { l.material.uniforms.t.value = t; l.position.x = -lookS.x * 12 * l.userData.par; l.position.y = -lookS.y * 7 * l.userData.par })
     nebs.forEach((n) => (n.material.rotation += dt * n.userData.rs))
 
-    // Warp streaks.
-    streaks.material.opacity = Math.min(0.7, speed * 1.1)
-    const len = 0.5 + speed * 22
+    // Dust.
+    camera.getWorldDirection(fwd)
+    if (!dustInit) { for (let i = 0; i < DN; i++) spawnDust(i, camera, false); dustInit = true }
+    const dv = (5 + speed * 40) * M.dust * dt
+    for (let i = 0; i < DN; i++) {
+      const j = i * 3; dPos[j] -= fwd.x * dv; dPos[j + 1] -= fwd.y * dv; dPos[j + 2] -= fwd.z * dv
+      rel.set(dPos[j] - camera.position.x, dPos[j + 1] - camera.position.y, dPos[j + 2] - camera.position.z)
+      const along = rel.dot(fwd)
+      if (along < 0.5 || along > 95 || rel.lengthSq() > 9000) spawnDust(i, camera, along < 0.5)
+    }
+    dGeo.attributes.position.needsUpdate = true
+
+    // Warp streaks between stops.
+    streaks.material.opacity = Math.min(0.85, speed * 1.3) * M.streak
+    const len = 0.5 + speed * 30
     for (let i = 0; i < SN; i++) {
-      const s = sSeed[i]; s[2] += dt * (30 + speed * 260); if (s[2] > 0) s[2] -= 160
+      const s = sSeed[i]; s[2] += dt * (20 + speed * 320); if (s[2] > 0) s[2] -= 160
       sPos.set([s[0], s[1], s[2], s[0], s[1], s[2] - len], i * 6)
     }
     sGeo.attributes.position.needsUpdate = true
 
-    // Hover + sparks.
-    if (hasPointer) {
-      ray.setFromCamera(mouse, camera)
-      for (const g of hoverables) { g.userData.hovered = false }
-      const hit = ray.intersectObjects(hoverables, true)[0]
-      if (hit) { let g = hit.object; while (g && !hoverables.includes(g)) g = g.parent; if (g) g.userData.hovered = true }
-      document.body.style.cursor = hit ? 'pointer' : ''
-      if (t - lastSpawn > 0.016) {
-        lastSpawn = t
-        const at = ray.ray.at(14, new THREE.Vector3())
-        for (let k = 0; k < 2; k++) { pPos.set([at.x, at.y, at.z], pi * 3); pVel[pi].set((Math.random() - 0.5) * 3, (Math.random() - 0.5) * 3, (Math.random() - 0.5) * 3); pLife[pi] = 1; pi = (pi + 1) % PN }
-      }
-    }
-    for (let i = 0; i < PN; i++) if (pLife[i] > 0) { pLife[i] -= dt * 1.2; pPos[i * 3] += pVel[i].x * dt; pPos[i * 3 + 1] += pVel[i].y * dt; pPos[i * 3 + 2] += pVel[i].z * dt; if (pLife[i] <= 0) pPos[i * 3 + 2] = -9999 }
-    pGeo.attributes.position.needsUpdate = true
-
     composer.render()
     if (!ready) { ready = true; o.onReady() }
-    if (!capture) raf = requestAnimationFrame(frame)
-  }
+    o.onFrame && o.onFrame({ f, speed, dpr })
 
-  if (reduced) {
-    // Static, composed overview: no flight, single render (re-rendered on resize).
-    const still = () => {
-      camera.position.set(mobile ? 30 : 46, 14, 70); camera.lookAt(mobile ? 4 : -14, mobile ? -14 : 0, -170); camera.fov = mobile ? 70 : 55; camera.updateProjectionMatrix()
-      fm.position.set(objPts[1].x + 26, objPts[1].y + 6, objPts[1].z + 10); invoice.position.set(objPts[1].x - 20, objPts[1].y - 5, objPts[1].z + 14)
-      shopStation.position.set(objPts[2].x + 18, objPts[2].y + 4, objPts[2].z + 8)
-      orbitLights.forEach((l) => l.L.position.set(l.c.x + l.r, l.c.y + 4, l.c.z + l.r))
-      composer.render()
+    // Adaptive resolution.
+    if (!capture) {
+      accT += real; accN++
+      if (accN >= 45) {
+        const avg = accT / accN; accT = 0; accN = 0
+        const next = avg > 0.024 ? Math.max(0.7, dpr - 0.15) : avg < 0.015 ? Math.min(maxDpr, dpr + 0.1) : dpr
+        if (Math.abs(next - dpr) > 0.01) { dpr = next; renderer.setPixelRatio(dpr); composer.setPixelRatio(dpr); renderer.setSize(window.innerWidth, window.innerHeight, false); composer.setSize(window.innerWidth, window.innerHeight); layers.forEach((l) => (l.material.uniforms.px.value = dpr)) }
+      }
+      raf = requestAnimationFrame(frame)
     }
-    still(); window.addEventListener('resize', still); o.onReady()
-    return () => { window.removeEventListener('resize', still); window.removeEventListener('resize', onResize); renderer.dispose() }
   }
 
-  place(prog, 0, 0)
+  pose(0, 0, true)
   if (capture) { window.__spaceFrame = (dt) => frame(dt); frame(0.016) } else raf = requestAnimationFrame(frame)
-  const onVis = () => { if (document.hidden) { running = false; cancelAnimationFrame(raf) } else if (!running) { running = true; clock.getDelta(); raf = requestAnimationFrame(frame) } }
+  const onVis = () => { if (document.hidden) { running = false; cancelAnimationFrame(raf) } else if (!running && !lost) { running = true; clock.getDelta(); raf = requestAnimationFrame(frame) } }
   document.addEventListener('visibilitychange', onVis)
   return () => {
     running = false; cancelAnimationFrame(raf)
-    window.removeEventListener('pointermove', onMove); window.removeEventListener('touchmove', onMove); window.removeEventListener('resize', onResize)
-    document.removeEventListener('visibilitychange', onVis); renderer.dispose()
+    window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onOri); window.removeEventListener('resize', onResize)
+    document.removeEventListener('visibilitychange', onVis); canvas.removeEventListener('webglcontextlost', onLost); renderer.dispose()
   }
 }
