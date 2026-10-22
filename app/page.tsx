@@ -1,6 +1,6 @@
 import SpaceFlight from '@/components/SpaceFlight'
 import { stops } from '@/data/stations'
-import SampleMockups from '@/components/SampleMockups'
+import BeforeAfter from '@/components/BeforeAfter'
 import MockupForm from '@/components/MockupForm'
 
 // Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
@@ -134,15 +134,9 @@ export default function Home() {
         <section id="samples" aria-labelledby="samples-title" className="scroll-mt-6 border-t border-white/10 bg-[#0b0a12]/85 backdrop-blur-sm">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
             <p className="kicker">Proof</p>
-            <h2 id="samples-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Before &amp; after samples</h2>
-            <p className="mt-4 max-w-2xl leading-7 text-white/80">Sample homepage mockups for fictional businesses, to show the kind of change you can expect.</p>
-            <SampleMockups />
-            <div className="mt-12 rounded-lg border border-white/15 p-6">
-              <p className="text-sm font-semibold text-[#8fd3de]">Live store</p>
-              <h3 className="mt-2 text-2xl text-white">SpockShop</h3>
-              <p className="mt-2 leading-7 text-white/80">A real online store I built and run, with product listings and an admin for managing items.</p>
-              <a href="https://spockshop.com" className="mt-4 inline-block font-semibold underline underline-offset-4">Visit spockshop.com →</a>
-            </div>
+            <h2 id="samples-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Before &amp; after</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-white/80">Real CF LLC sites, then and now. Drag the line to compare each earlier version with what&rsquo;s live today.</p>
+            <BeforeAfter />
           </div>
         </section>
 

@@ -57,6 +57,7 @@ export default function SpaceFlight() {
       if (h.bar) h.bar.style.transform = `scaleX(${Math.min(1, f / (stops.length - 1))})`
       root.style.setProperty('--warp', speed.toFixed(3))
       if (canvas.current) canvas.current.style.opacity = String(raw > stops.length - 0.6 ? 0.45 : 1)
+      root.classList.toggle('past-flight', raw > stops.length - 0.6)
     }
     window.addEventListener('resize', measure); window.addEventListener('load', measure)
     const mt = window.setInterval(measure, 1500)
