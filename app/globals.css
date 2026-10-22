@@ -176,3 +176,25 @@ html[data-space="live"] .stop-card p, html[data-space="live"] .stop-card li { te
 @media (max-width: 767px), (max-aspect-ratio: 9/10) { .hud-tl, .hud-tr { top: 4.2rem; } .hud-progress { top: 3.8rem; } .hud-hint { display: none; } .hud-dots { top: 38%; } }
 .space-note { position: relative; z-index: 40; margin: 4.5rem auto 0; max-width: 40rem; padding: .75rem 1rem; border: 1px solid rgba(255,210,122,.5); background: rgba(40,28,8,.7); color: #ffe9c7; font-size: .9rem; border-radius: .5rem; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .scroll-hint, .space-loader-ring { animation: none; } }
+
+/* Before & after slider (HUD style) */
+.ba-tab { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(207,233,255,.7); border: 1px solid rgba(159,233,255,.2); background: rgba(10,12,24,.6); padding: .6rem .9rem; border-radius: 4px; transition: color .2s, border-color .2s, box-shadow .2s; }
+.ba-tab:hover { color: #fff; border-color: rgba(159,233,255,.5); }
+.ba-tab.is-active { color: #fff; border-color: #9fe9ff; box-shadow: 0 0 0 1px rgba(159,233,255,.25), 0 0 18px rgba(127,227,255,.25); }
+.ba-tab:focus-visible, .ba-knob:focus-visible { outline: 2px solid #ffd27a; outline-offset: 3px; }
+.ba-tab-n { color: #ffd27a; margin-right: .35rem; }
+.ba-tabs { scrollbar-width: none; } .ba-tabs::-webkit-scrollbar { display: none; }
+.ba-panel { position: relative; border: 1px solid rgba(159,233,255,.18); background: linear-gradient(180deg, rgba(14,18,36,.75), rgba(8,7,16,.85)); border-radius: 6px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.8), inset 0 0 60px rgba(127,227,255,.04); }
+.ba-corner { position: absolute; width: 16px; height: 16px; border: 1px solid #9fe9ff; opacity: .8; pointer-events: none; }
+.ba-corner.tl { left: -1px; top: -1px; border-right: 0; border-bottom: 0; } .ba-corner.tr { right: -1px; top: -1px; border-left: 0; border-bottom: 0; }
+.ba-corner.bl { left: -1px; bottom: -1px; border-right: 0; border-top: 0; } .ba-corner.br { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
+.ba-frame { box-shadow: inset 0 0 0 1px rgba(159,233,255,.12); }
+.ba-tag { position: absolute; top: .75rem; z-index: 2; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(6,8,18,.72); border: 1px solid rgba(159,233,255,.3); padding: .3rem .55rem; border-radius: 3px; pointer-events: none; backdrop-filter: blur(4px); }
+.ba-line { background: #9fe9ff; box-shadow: 0 0 12px #7fe3ff, 0 0 2px #fff; }
+.ba-knob { z-index: 3; color: #05040a; background: #9fe9ff; box-shadow: 0 0 0 4px rgba(159,233,255,.25), 0 0 24px rgba(127,227,255,.7); cursor: ew-resize; touch-action: none; }
+.ba-meta { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(207,233,255,.6); }
+@media (max-width: 480px) { .ba-tag { font-size: 9px; top: .5rem; padding: .2rem .4rem; } .ba-tag.left-3 { left: .5rem; } .ba-tag.right-3 { right: .5rem; } }
+/* Hide the flight HUD once the flight is over so it never sits on top of page sections */
+.hud, .hud-dots { transition: opacity .4s ease; }
+.past-flight .hud, .past-flight .hud-dots { opacity: 0; pointer-events: none; }
+.past-flight .hud-dots button { pointer-events: none; }
