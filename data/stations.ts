@@ -19,16 +19,15 @@ export const stops: Stop[] = [
   },
   {
     id: 'saas', kicker: 'Stop 2 · The SaaS system', title: 'SaaS Nation',
-    body: 'SaaS Nation is a library of micro-SaaS tools, coming soon: small, focused apps that each do one job well, all in one place. Two worlds already orbit it.',
+    body: 'SaaS Nation is live: a library of focused tools for coaches and creators. Get the one tool you need, or All Access to every tool we have and every tool we launch next.',
     points: [
-      'Funnel Maker (live): build a landing page or launch funnel in three steps, pick a template, click to edit, publish',
-      'Five animated templates, from Aurora waitlist to Neon link hub',
-      'InvoiceForge: a free invoice generator with business profiles, any currency, and PDF or image export',
+      'All Access: every tool for $29/mo or $249/yr',
+      'Or pick a single tool for $12/mo or $99/yr',
+      'Monthly plans include a 7-day free trial',
     ],
     links: [
+      { label: 'See pricing', href: 'https://saasnation.site/pricing' },
       { label: 'SaaS Nation', href: 'https://saasnation.site/' },
-      { label: 'Funnel Maker', href: 'https://funnels.saasnation.site/' },
-      { label: 'InvoiceForge', href: 'https://cf-llc.github.io/InvoiceForge/' },
     ],
     accent: '#ff7ad9',
   },

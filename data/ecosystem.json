@@ -64,7 +64,15 @@
       "name": "SaaS Nation",
       "group": "public",
       "url": "https://saasnation.site/",
-      "desc": "Library of micro-SaaS tools, coming soon"
+      "desc": "Live library of tools for coaches and creators"
+    },
+    {
+      "id": "saasnation-pricing",
+      "name": "SaaS Nation pricing",
+      "group": "public",
+      "parent": "saasnation",
+      "url": "https://saasnation.site/pricing",
+      "desc": "All Access $29/mo or $249/yr; one tool $12/mo or $99/yr; 7-day trial on monthly plans"
     },
     {
       "id": "motivation",
