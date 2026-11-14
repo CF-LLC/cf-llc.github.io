@@ -61,6 +61,7 @@ export default function Home() {
           <nav aria-label="Main" className="flex gap-x-3 text-xs text-white/80 sm:gap-x-5 sm:text-sm">
             <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
+            <a href="/case-studies" className="whitespace-nowrap hover:text-white">Case studies</a>
             <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
             <a href="#mockup" className="whitespace-nowrap font-semibold text-white underline underline-offset-4">Free mockup</a>
           </nav>
