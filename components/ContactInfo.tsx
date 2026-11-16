@@ -3,8 +3,7 @@
 import { FormEvent, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Github, Instagram, Mail, Send, Twitter, Video } from 'lucide-react'
-
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mqegdjgj'
+import { FORMSPREE_ENDPOINT } from '@/lib/form'
 
 const contactInfo = [
   { icon: Mail, label: 'Email', url: 'mailto:cooperfeatherstonellc@gmail.com' },
