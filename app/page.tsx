@@ -2,39 +2,11 @@ import SpaceFlight from '@/components/SpaceFlight'
 import { stops } from '@/data/stations'
 import BeforeAfter from '@/components/BeforeAfter'
 import MockupForm from '@/components/MockupForm'
+import { packages } from '@/data/packages'
 
 // Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
 // Links: live house Stripe payment links (metadata rep=house, source=storefront),
 // so storefront sales are credited to the site, not an agent rep.
-const packages = [
-  {
-    name: 'Starter Site',
-    price: '$499',
-    priceNote: 'setup + $39/mo',
-    blurb: 'A 1–3 page mobile site with a contact form. Hosting and updates included in the monthly fee.',
-    items: ['1–3 pages', 'Mobile-first design', 'Contact form', 'Hosting & updates'],
-    href: 'https://buy.stripe.com/14A28rg2Ua0p0nE77V4c80l',
-    featured: true,
-  },
-  {
-    name: 'Pro Site',
-    price: '$1,200',
-    priceNote: 'setup + $59/mo',
-    blurb: 'More room for a growing business: booking, menu or gallery pages, plus basic SEO.',
-    items: ['Up to 8 pages', 'Booking, menu or gallery', 'Basic SEO', '2 revision rounds'],
-    href: 'https://buy.stripe.com/4gMdR9bME3C1daq1NB4c80m',
-    featured: false,
-  },
-  {
-    name: 'Site Care',
-    price: '$49',
-    priceNote: 'per month',
-    blurb: 'Already have a site? I keep it updated and watched.',
-    items: ['Updates', 'Uptime checks', 'Monthly report', 'For an existing site'],
-    href: 'https://buy.stripe.com/dRm8wP6ska0pdaqdwj4c80n',
-    featured: false,
-  },
-]
 
 const steps = [
   { t: 'Mockup', b: 'Send your business name and current site. I make a free homepage mockup so you can see the direction first.' },
@@ -61,6 +33,7 @@ export default function Home() {
           <nav aria-label="Main" className="flex gap-x-3 text-xs text-white/80 sm:gap-x-5 sm:text-sm">
             <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
+            <a href="/nwa" className="whitespace-nowrap hover:text-white">Bentonville &amp; NWA</a>
             <a href="/case-studies" className="whitespace-nowrap hover:text-white">Case studies</a>
             <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
             <a href="#mockup" className="whitespace-nowrap font-semibold text-white underline underline-offset-4">Free mockup</a>
@@ -171,7 +144,7 @@ export default function Home() {
       <footer className="relative z-10 border-t border-white/10 bg-[#05040a]/90">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
           <p>CF LLC · Remote, serving small businesses across the US</p>
-          <p><a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
+          <p><a href="/nwa" className="underline">Websites for Bentonville and NWA</a> · <a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
         </div>
       </footer>
     </div>
