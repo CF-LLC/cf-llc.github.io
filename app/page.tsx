@@ -2,6 +2,7 @@ import SpaceFlight from '@/components/SpaceFlight'
 import { stops } from '@/data/stations'
 import BeforeAfter from '@/components/BeforeAfter'
 import MockupForm from '@/components/MockupForm'
+import QuoteQuiz from '@/components/QuoteQuiz'
 import { packages } from '@/data/packages'
 
 // Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
@@ -33,6 +34,7 @@ export default function Home() {
           <nav aria-label="Main" className="flex gap-x-3 text-xs text-white/80 sm:gap-x-5 sm:text-sm">
             <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
+            <a href="#quote" className="whitespace-nowrap hover:text-white">Get a quote</a>
             <a href="/nwa" className="whitespace-nowrap hover:text-white">Bentonville &amp; NWA</a>
             <a href="/sample-homepages" className="whitespace-nowrap hover:text-white">Sample homepages</a>
             <a href="/case-studies" className="whitespace-nowrap hover:text-white">Case studies</a>
@@ -88,7 +90,21 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#mockup" className="underline">Start with a free mockup</a> or <a href="/sample-homepages" className="underline">see sample homepages</a>.</p>
+            <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#quote" className="underline">Get a quote in 60 seconds</a>, <a href="#mockup" className="underline">start with a free mockup</a>, or <a href="/sample-homepages" className="underline">see sample homepages</a>.</p>
+          </div>
+        </section>
+
+        <section id="quote" aria-labelledby="quote-title" className="scroll-mt-6 bg-[#07060c]/80">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2">
+            <div>
+              <p className="kicker">About a minute</p>
+              <h2 id="quote-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Get a quote in 60 seconds</h2>
+              <p className="mt-4 leading-7 text-white/80">
+                Four short questions about your business, pages, timeline, and whether you need ongoing care. I&apos;ll recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 setup + $59/mo), or Site Care ($49/mo) — the same packages listed above — and you can send me the request.
+              </p>
+              <p className="mt-4 text-sm text-white/70">Prefer a longer path? <a href="#mockup" className="underline">Request a free homepage mockup</a> instead. You only pay when you choose a package.</p>
+            </div>
+            <QuoteQuiz />
           </div>
         </section>
 

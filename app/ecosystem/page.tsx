@@ -13,6 +13,7 @@ export default function EcosystemPage() {
         <a href="/" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
         <nav aria-label="Main" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
           <a href="/#packages" className="hover:text-white">Packages</a>
+          <a href="/quote" className="hover:text-white">Get a quote</a>
           <a href="/#samples" className="hover:text-white">Samples</a>
           <a href="/#faq" className="hover:text-white">FAQ</a>
           <a href="/sample-homepages" className="hover:text-white">Sample homepages</a>

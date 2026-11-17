@@ -39,7 +39,7 @@ export default function NwaLanding() {
       <section id="packages" aria-labelledby="nwa-packages-title" className="mt-14">
         <p className="kicker">Packages</p>
         <h2 id="nwa-packages-title" className="display-title mt-4 text-3xl text-white sm:text-4xl">Simple, upfront pricing</h2>
-        <p className="mt-3 text-sm text-white/70">The same packages as on the <a href="/#packages" className="underline">CF LLC home page</a>.</p>
+        <p className="mt-3 text-sm text-white/70">The same packages as on the <a href="/#packages" className="underline">CF LLC home page</a>. Not sure which fits? <a href="/quote" className="underline">Get a quote in 60 seconds</a>.</p>
         <ul className="mt-8 grid gap-6 md:grid-cols-3">
           {packages.map((p) => (
             <li key={p.name} className={`flex flex-col rounded-lg border p-6 ${p.featured ? 'border-[#4aa8b8] bg-[#4aa8b8]/10' : 'border-white/15 bg-white/[0.03]'}`}>
