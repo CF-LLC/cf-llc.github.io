@@ -6,6 +6,7 @@ export default function CaseStudyShell({ children, wide = false }: { children: R
         <nav aria-label="Main" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
           <a href="/#packages" className="hover:text-white">Packages</a>
           <a href="/nwa" className="hover:text-white">Bentonville &amp; NWA</a>
+          <a href="/sample-homepages" className="hover:text-white">Sample homepages</a>
           <a href="/case-studies" className="hover:text-white">Case studies</a>
           <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
           <a href="/#mockup" className="font-semibold text-white underline underline-offset-4">Free mockup</a>

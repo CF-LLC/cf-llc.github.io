@@ -34,6 +34,7 @@ export default function Home() {
             <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
             <a href="/nwa" className="whitespace-nowrap hover:text-white">Bentonville &amp; NWA</a>
+            <a href="/sample-homepages" className="whitespace-nowrap hover:text-white">Sample homepages</a>
             <a href="/case-studies" className="whitespace-nowrap hover:text-white">Case studies</a>
             <a href="/ecosystem" className="hover:text-white">Ecosystem</a>
             <a href="#mockup" className="whitespace-nowrap font-semibold text-white underline underline-offset-4">Free mockup</a>
@@ -87,7 +88,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#mockup" className="underline">Start with a free mockup.</a></p>
+            <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#mockup" className="underline">Start with a free mockup</a> or <a href="/sample-homepages" className="underline">see sample homepages</a>.</p>
           </div>
         </section>
 
