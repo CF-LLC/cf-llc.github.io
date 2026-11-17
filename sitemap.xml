@@ -21,6 +21,10 @@
 <changefreq>monthly</changefreq>
 </url>
 <url>
+<loc>https://cf-llc.github.io/quote</loc>
+<changefreq>monthly</changefreq>
+</url>
+<url>
 <loc>https://cf-llc.github.io/ecosystem</loc>
 <changefreq>monthly</changefreq>
 </url>
