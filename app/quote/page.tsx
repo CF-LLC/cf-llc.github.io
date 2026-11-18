@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import QuoteQuiz from '@/components/QuoteQuiz'
 
 export const metadata: Metadata = {
@@ -31,9 +30,7 @@ export default function QuotePage() {
           Four short questions. I&apos;ll recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 setup + $59/mo), or Site Care ($49/mo) — the same packages as on the home page — and you can send me the request.
         </p>
         <div className="mt-10">
-          <Suspense fallback={<p className="text-white/70">Loading the quiz…</p>}>
           <QuoteQuiz />
-        </Suspense>
         </div>
       </main>
       <footer className="border-t border-white/10 bg-[#05040a]/90">
