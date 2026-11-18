@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import CaseStudyShell from '@/components/CaseStudyShell'
 import { packages } from '@/data/packages'
 import { packageFor, sampleHomepages } from '@/data/sampleHomepages'
+import { quotePathForSample } from '@/lib/quote'
 
 const starter = packages.find((p) => p.name === 'Starter Site')!
 const pro = packages.find((p) => p.name === 'Pro Site')!
@@ -46,9 +47,14 @@ export default function SampleHomepagesPage() {
                 <h2 className="mt-2 text-2xl font-bold text-white">{sample.name}</h2>
                 <p className="mt-2 text-sm text-white/70">{sample.blurb}</p>
                 <p className="mt-3 text-sm text-white/70">{sample.whyPackage}</p>
-                <a href={pkg.href} className="mt-5 inline-block rounded-md bg-[#eceae4] px-5 py-3 text-center font-semibold text-[#070708] hover:bg-white">
-                  {pkg.name} · {pkg.price} {pkg.priceNote}
-                </a>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <a href={quotePathForSample(sample)} className="inline-block rounded-md bg-[#eceae4] px-5 py-3 text-center font-semibold text-[#070708] hover:bg-white">
+                    Get one like this
+                  </a>
+                  <a href={pkg.href} className="inline-block rounded-md border border-white/40 px-5 py-3 text-center font-semibold text-white hover:bg-white/10">
+                    {pkg.name} · {pkg.price} {pkg.priceNote}
+                  </a>
+                </div>
               </div>
             </li>
           )
