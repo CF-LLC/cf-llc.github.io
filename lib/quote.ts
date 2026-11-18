@@ -1,4 +1,5 @@
 import { packages, type SitePackage } from '@/data/packages'
+import { sampleHomepages, type SampleHomepage } from '@/data/sampleHomepages'
 
 export const QUOTE_PATH = '/quote'
 
@@ -93,4 +94,40 @@ export function recommendQuote(a: QuoteAnswers): QuoteRecommendation {
 
 export function optionLabel<T extends { id: string; label: string }>(options: readonly T[], id: string): string {
   return options.find((o) => o.id === id)?.label ?? id
+}
+
+
+export type StylePreset = {
+  style: string
+  familyLabel: string
+  sample: SampleHomepage
+  answers: Pick<QuoteAnswers, 'business' | 'pages'>
+  step: number
+}
+
+/**
+ * Map a sample-homepage style (family id or sample slug) to quiz answers.
+ * Service businesses with a Starter sample start at 1–3 pages; Pro samples
+ * (gallery/booking) start at up to 8 pages. Timeline and care stay unanswered.
+ */
+export function stylePreset(style?: string | null, sampleSlug?: string | null): StylePreset | null {
+  const slug = (sampleSlug || '').trim().toLowerCase()
+  const family = (style || '').trim().toLowerCase()
+  const sample =
+    sampleHomepages.find((s) => s.slug === slug) ||
+    sampleHomepages.find((s) => s.family === family) ||
+    null
+  if (!sample) return null
+  const pages: PagesId = sample.packageName === 'Pro Site' ? 'up-to-8' : '1-3'
+  return {
+    style: sample.family,
+    familyLabel: sample.familyLabel,
+    sample,
+    answers: { business: 'service', pages },
+    step: 2, // first unanswered: timeline
+  }
+}
+
+export function quotePathForSample(sample: SampleHomepage): string {
+  return `${QUOTE_PATH}?style=${encodeURIComponent(sample.family)}&sample=${encodeURIComponent(sample.slug)}`
 }

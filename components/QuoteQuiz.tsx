@@ -9,6 +9,7 @@ import {
   TIMELINE_OPTIONS,
   optionLabel,
   recommendQuote,
+  stylePreset,
   type BusinessId,
   type CareId,
   type PagesId,
@@ -28,7 +29,7 @@ const STEPS = [
   { key: 'care' as const, title: 'Do you want ongoing hosting and updates?', options: CARE_OPTIONS },
 ]
 
-function mailtoFor(answers: QuoteAnswers, recName: string, business: string, email: string, notes: string) {
+function mailtoFor(answers: QuoteAnswers, recName: string, business: string, email: string, notes: string, styleNote?: string) {
   const subject = `Quote request: ${recName} for ${business || 'a small business'}`
   const body = [
     'Hi Cooper,',
@@ -42,6 +43,7 @@ function mailtoFor(answers: QuoteAnswers, recName: string, business: string, ema
     `Timeline: ${optionLabel(TIMELINE_OPTIONS, answers.timeline)}`,
     `Ongoing care: ${optionLabel(CARE_OPTIONS, answers.care)}`,
     notes ? `Notes: ${notes}` : '',
+    styleNote ? `Sample style: ${styleNote}` : '',
     '',
     'Thanks!',
   ]
@@ -50,17 +52,28 @@ function mailtoFor(answers: QuoteAnswers, recName: string, business: string, ema
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
-export default function QuoteQuiz() {
-  const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Partial<QuoteAnswers>>({})
+export default function QuoteQuiz({ initialStyle, initialSample }: { initialStyle?: string; initialSample?: string } = {}) {
+  const preset = stylePreset(initialStyle, initialSample)
+  const [step, setStep] = useState(preset?.step ?? 0)
+  const [answers, setAnswers] = useState<Partial<QuoteAnswers>>(preset?.answers ?? {})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [draft, setDraft] = useState({ business: '', email: '', notes: '' })
 
   const complete = Boolean(answers.business && answers.pages && answers.timeline && answers.care)
   const rec = complete ? recommendQuote(answers as QuoteAnswers) : null
   const mailtoHref = useMemo(
-    () => (rec && complete ? mailtoFor(answers as QuoteAnswers, rec.pkg.name, draft.business, draft.email, draft.notes) : `mailto:${CONTACT_EMAIL}`),
-    [answers, complete, rec, draft],
+    () =>
+      rec && complete
+        ? mailtoFor(
+            answers as QuoteAnswers,
+            rec.pkg.name,
+            draft.business,
+            draft.email,
+            draft.notes,
+            preset ? `${preset.familyLabel} (${preset.sample.name})` : undefined,
+          )
+        : `mailto:${CONTACT_EMAIL}`,
+    [answers, complete, rec, draft, preset],
   )
 
   function choose(key: (typeof STEPS)[number]['key'], id: string) {
@@ -101,6 +114,7 @@ export default function QuoteQuiz() {
           pages_needed: optionLabel(PAGES_OPTIONS, a.pages),
           timeline: optionLabel(TIMELINE_OPTIONS, a.timeline),
           ongoing_care: optionLabel(CARE_OPTIONS, a.care),
+          sample_style: preset ? `${preset.familyLabel} (${preset.sample.name})` : undefined,
           _subject: `Quote request: ${rec.pkg.name} for ${business}`,
           _replyto: email,
         }),
@@ -115,6 +129,11 @@ export default function QuoteQuiz() {
 
   return (
     <div className="rounded-lg border border-white/15 bg-[#111114]/80 p-6 sm:p-8">
+      {preset ? (
+        <p className="mb-6 rounded-md border border-[#4aa8b8]/40 bg-[#4aa8b8]/10 px-4 py-3 text-sm text-white/90" data-testid="style-preset">
+          You came from the {preset.sample.name} sample ({preset.familyLabel} style). I preselected a {preset.answers.business === 'service' ? 'service business' : preset.answers.business} with {preset.sample.packageName === 'Pro Site' ? 'up to 8 pages' : '1–3 pages'} so the quiz can recommend {preset.sample.packageName}. You can change any answer.
+        </p>
+      ) : null}
       <ol className="mb-6 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wider text-white/60" aria-label="Quiz progress">
         {STEPS.map((s, i) => (
           <li key={s.key} className={i === step || (complete && i <= 3) ? 'text-[#8fd3de]' : ''}>
@@ -151,25 +170,33 @@ export default function QuoteQuiz() {
         <div>
           <p className="kicker">Your match</p>
           <h3 className="mt-2 text-3xl text-white">{rec.pkg.name}</h3>
-          <p className="mt-3">
+          <p className="mt-3" data-testid="quote-price">
             <span className="text-4xl font-semibold text-white">{rec.pkg.price}</span>{' '}
             <span className="text-white/80">{rec.pkg.priceNote}</span>
           </p>
+          <p className="mt-2 text-sm text-white/70">{rec.pkg.name} is {rec.pkg.price} {rec.pkg.priceNote}.</p>
           <p className="mt-4 leading-7 text-white/80">{rec.reason}</p>
           <p className="mt-3 leading-7 text-white/70">{rec.pkg.blurb}</p>
+          {rec.pkg.items?.length ? (
+            <ul className="mt-3 grid gap-1 text-sm text-white/70">
+              {rec.pkg.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
           <p className="mt-4">
             <a href={rec.pkg.href} className="inline-block rounded-md bg-[#eceae4] px-5 py-3 font-semibold text-[#070708] hover:bg-white">
               Buy {rec.pkg.name}
               <span className="sr-only"> (secure checkout on Stripe)</span>
             </a>
           </p>
-          <button type="button" className="mt-4 text-sm text-white/70 underline" onClick={() => { setAnswers({}); setStep(0); setStatus('idle') }}>
+          <button type="button" className="mt-4 text-sm text-white/70 underline" onClick={() => { setAnswers(preset?.answers ?? {}); setStep(preset?.step ?? 0); setStatus('idle') }}>
             Start over
           </button>
 
           <form onSubmit={onSubmit} className="relative mt-10 grid gap-5 border-t border-white/15 pt-8" aria-describedby="quote-form-note">
-            <h3 className="text-2xl text-white">Send this as a lead</h3>
-            <p className="text-sm text-white/75">I&apos;ll email you back at the address you enter. You can also buy the package above if you already know you want it.</p>
+            <h3 className="text-2xl text-white">Next step: send this quote request</h3>
+            <p className="text-sm text-white/75">Tell me your business name and email and I&apos;ll write you back. You can also buy the package above if you already know you want it.</p>
             <div>
               <label htmlFor="quote-business" className="font-semibold">Business name</label>
               <input id="quote-business" name="business" required autoComplete="organization" className={field} onChange={(e) => setDraft((c) => ({ ...c, business: e.target.value }))} />

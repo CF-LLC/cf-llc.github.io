@@ -7,8 +7,12 @@ export const metadata: Metadata = {
     'Answer a few questions and I will recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 + $59/mo), or Site Care ($49/mo). Then send me the request.',
 }
 
-export default function QuotePage() {
+type QuotePageProps = { searchParams: { style?: string; sample?: string } }
+
+export default function QuotePage({ searchParams }: QuotePageProps) {
+  const params = searchParams
   return (
+
     <div className="site-shell min-h-screen bg-[#070708] text-[#eceae4]">
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
         <a href="/" className="text-sm font-semibold tracking-[0.18em] text-white">CF LLC</a>
@@ -29,7 +33,7 @@ export default function QuotePage() {
           Four short questions. I&apos;ll recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 setup + $59/mo), or Site Care ($49/mo) — the same packages as on the home page — and you can send me the request.
         </p>
         <div className="mt-10">
-          <QuoteQuiz />
+          <QuoteQuiz initialStyle={params.style} initialSample={params.sample} />
         </div>
       </main>
       <footer className="border-t border-white/10 bg-[#05040a]/90">
