@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import QuoteQuiz from '@/components/QuoteQuiz'
 
 export const metadata: Metadata = {
@@ -7,10 +8,7 @@ export const metadata: Metadata = {
     'Answer a few questions and I will recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 + $59/mo), or Site Care ($49/mo). Then send me the request.',
 }
 
-type QuotePageProps = { searchParams: { style?: string; sample?: string } }
-
-export default function QuotePage({ searchParams }: QuotePageProps) {
-  const params = searchParams
+export default function QuotePage() {
   return (
 
     <div className="site-shell min-h-screen bg-[#070708] text-[#eceae4]">
@@ -33,7 +31,9 @@ export default function QuotePage({ searchParams }: QuotePageProps) {
           Four short questions. I&apos;ll recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 setup + $59/mo), or Site Care ($49/mo) — the same packages as on the home page — and you can send me the request.
         </p>
         <div className="mt-10">
-          <QuoteQuiz initialStyle={params.style} initialSample={params.sample} />
+          <Suspense fallback={<p className="text-white/70">Loading the quiz…</p>}>
+          <QuoteQuiz />
+        </Suspense>
         </div>
       </main>
       <footer className="border-t border-white/10 bg-[#05040a]/90">

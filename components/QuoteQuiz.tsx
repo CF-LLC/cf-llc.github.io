@@ -1,6 +1,7 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { CONTACT_EMAIL, FORMSPREE_ENDPOINT } from '@/lib/form'
 import {
   BUSINESS_OPTIONS,
@@ -52,12 +53,21 @@ function mailtoFor(answers: QuoteAnswers, recName: string, business: string, ema
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
-export default function QuoteQuiz({ initialStyle, initialSample }: { initialStyle?: string; initialSample?: string } = {}) {
-  const preset = stylePreset(initialStyle, initialSample)
-  const [step, setStep] = useState(preset?.step ?? 0)
-  const [answers, setAnswers] = useState<Partial<QuoteAnswers>>(preset?.answers ?? {})
+export default function QuoteQuiz() {
+  const params = useSearchParams()
+  const preset = stylePreset(params.get('style'), params.get('sample'))
+  const [step, setStep] = useState(0)
+  const [answers, setAnswers] = useState<Partial<QuoteAnswers>>({})
+  const [presetApplied, setPresetApplied] = useState(false)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [draft, setDraft] = useState({ business: '', email: '', notes: '' })
+
+  useEffect(() => {
+    if (presetApplied || !preset) return
+    setAnswers(preset.answers)
+    setStep(preset.step)
+    setPresetApplied(true)
+  }, [preset, presetApplied])
 
   const complete = Boolean(answers.business && answers.pages && answers.timeline && answers.care)
   const rec = complete ? recommendQuote(answers as QuoteAnswers) : null
