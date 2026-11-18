@@ -1,7 +1,6 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { CONTACT_EMAIL, FORMSPREE_ENDPOINT } from '@/lib/form'
 import {
   BUSINESS_OPTIONS,
@@ -54,20 +53,20 @@ function mailtoFor(answers: QuoteAnswers, recName: string, business: string, ema
 }
 
 export default function QuoteQuiz() {
-  const params = useSearchParams()
-  const preset = stylePreset(params.get('style'), params.get('sample'))
+  const [preset, setPreset] = useState<ReturnType<typeof stylePreset>>(null)
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Partial<QuoteAnswers>>({})
-  const [presetApplied, setPresetApplied] = useState(false)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [draft, setDraft] = useState({ business: '', email: '', notes: '' })
 
   useEffect(() => {
-    if (presetApplied || !preset) return
-    setAnswers(preset.answers)
-    setStep(preset.step)
-    setPresetApplied(true)
-  }, [preset, presetApplied])
+    const sp = new URLSearchParams(window.location.search)
+    const next = stylePreset(sp.get('style'), sp.get('sample'))
+    if (!next) return
+    setPreset(next)
+    setAnswers(next.answers)
+    setStep(next.step)
+  }, [])
 
   const complete = Boolean(answers.business && answers.pages && answers.timeline && answers.care)
   const rec = complete ? recommendQuote(answers as QuoteAnswers) : null
