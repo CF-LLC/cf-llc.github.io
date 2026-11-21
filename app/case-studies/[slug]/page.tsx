@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSeo } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import CaseStudyShell from '../../../components/CaseStudyShell'
 import { CHECKED_ON, caseStudies, getCaseStudy } from '../../../data/caseStudies'
@@ -11,7 +12,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const c = getCaseStudy((await params).slug)
   if (!c) return {}
-  return { title: `${c.name} case study — CF LLC`, description: `${c.name}: ${c.tagline}. What we built, the stack, and real numbers as they come in.` }
+  return pageSeo(`/case-studies/${c.slug}`, `${c.name} case study — CF LLC`, `${c.name}: ${c.tagline}. What we built, the stack, and real numbers as they come in.`)
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {

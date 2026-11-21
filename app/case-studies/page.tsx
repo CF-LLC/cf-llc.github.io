@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
+import { pageSeo } from '@/lib/seo'
 import CaseStudyShell from '../../components/CaseStudyShell'
 import { caseStudies } from '../../data/caseStudies'
 
-export const metadata: Metadata = {
-  title: 'Case studies — CF LLC',
-  description: 'What CF LLC has built and runs itself: SaaS Nation, SpockShop, Satoshi’s Path and OpenClaw. Real numbers only, added as they come in.',
-}
+export const metadata: Metadata = pageSeo('/case-studies', 'Case studies — CF LLC', 'What CF LLC has built and runs itself: SaaS Nation, SpockShop, Satoshi’s Path and OpenClaw. Real numbers only, added as they come in.')
 
 export default function CaseStudies() {
   return (

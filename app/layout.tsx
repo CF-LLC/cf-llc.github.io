@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Instrument_Serif, Inter } from 'next/font/google'
+import { OG_IMAGE, SITE, SITE_DESCRIPTION, SITE_NAME, jsonLdScript, siteJsonLd } from '@/lib/seo'
 
 const display = Instrument_Serif({
   subsets: ['latin'],
@@ -14,8 +15,23 @@ const body = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'CF LLC — Websites for small businesses, live in a week',
-  description: 'Mobile-friendly websites for small businesses anywhere in the US. Starter Site $499 setup + $39/mo. Get a free homepage mockup.',
+  metadataBase: new URL(SITE),
+  title: { default: 'CF LLC — Websites for small businesses, live in a week', template: '%s' },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: 'CF LLC — Websites for small businesses, live in a week',
+    description: SITE_DESCRIPTION,
+    url: SITE,
+    siteName: SITE_NAME,
+    type: 'website',
+    images: [{ url: OG_IMAGE }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'CF LLC — Websites for small businesses, live in a week',
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
   icons: [
     { rel: 'icon', url: '/favicon.ico' },
     { rel: 'apple-touch-icon', sizes: '180x180', url: '/apple-touch-icon.png' },
@@ -32,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"></script>
       </head>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd()) }} />
         {children}
         {/* Cloudflare Web Analytics */}
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5da4746aa37e402492c3dca880f56c35"}'></script>
