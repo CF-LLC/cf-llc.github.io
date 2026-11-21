@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
+import { pageSeo } from '@/lib/seo'
 import EcosystemGraph from '../../components/EcosystemGraph'
+import SiteFooter from '@/components/SiteFooter'
 
-export const metadata: Metadata = {
-  title: 'My Ecosystem — CF LLC',
-  description: 'An interactive 3D map of the sites and tools in the CF LLC ecosystem.',
-}
+export const metadata: Metadata = pageSeo('/ecosystem', 'My Ecosystem — CF LLC', 'An interactive 3D map of the sites and tools in the CF LLC ecosystem.')
 
 export default function EcosystemPage() {
   return (
@@ -25,6 +24,7 @@ export default function EcosystemPage() {
       <main id="main" className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
         <EcosystemGraph />
       </main>
+      <SiteFooter />
     </div>
   )
 }

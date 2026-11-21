@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSeo } from '@/lib/seo'
 import CaseStudyShell from '@/components/CaseStudyShell'
 import { packages } from '@/data/packages'
 import { packageFor, sampleHomepages } from '@/data/sampleHomepages'
@@ -7,11 +8,7 @@ import { quotePathForSample } from '@/lib/quote'
 const starter = packages.find((p) => p.name === 'Starter Site')!
 const pro = packages.find((p) => p.name === 'Pro Site')!
 
-export const metadata: Metadata = {
-  title: 'Sample homepages — CF LLC',
-  description:
-    'Sample homepage mockups with made-up business names, showing layout options for Starter Site ($499 setup + $39/mo) and Pro Site ($1,200 setup + $59/mo). These are not client sites.',
-}
+export const metadata: Metadata = pageSeo('/sample-homepages', 'Sample homepages — CF LLC', 'Sample homepage mockups with made-up business names, showing layout options for Starter Site ($499 setup + $39/mo) and Pro Site ($1,200 setup + $59/mo). These are not client sites.')
 
 export default function SampleHomepagesPage() {
   return (

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
+import { pageSeo } from '@/lib/seo'
 import QuoteQuiz from '@/components/QuoteQuiz'
+import SiteFooter from '@/components/SiteFooter'
 
-export const metadata: Metadata = {
-  title: 'Get a quote in 60 seconds — CF LLC',
-  description:
-    'Answer a few questions and I will recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 + $59/mo), or Site Care ($49/mo). Then send me the request.',
-}
+export const metadata: Metadata = pageSeo('/quote', 'Get a quote in 60 seconds — CF LLC', 'Answer a few questions and I will recommend Starter Site ($499 setup + $39/mo), Pro Site ($1,200 + $59/mo), or Site Care ($49/mo). Then send me the request.')
 
 export default function QuotePage() {
   return (
@@ -33,12 +31,7 @@ export default function QuotePage() {
           <QuoteQuiz />
         </div>
       </main>
-      <footer className="border-t border-white/10 bg-[#05040a]/90">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
-          <p>CF LLC · Remote, serving small businesses across the US</p>
-          <p><a href="/nwa" className="underline">Websites for Bentonville and NWA</a> · <a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

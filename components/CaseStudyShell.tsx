@@ -1,3 +1,5 @@
+import SiteFooter from '@/components/SiteFooter'
+
 export default function CaseStudyShell({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
   return (
     <div className="site-shell min-h-screen bg-[#070708] text-[#eceae4]">
@@ -14,12 +16,7 @@ export default function CaseStudyShell({ children, wide = false }: { children: R
         </nav>
       </header>
       <main id="main" className={`mx-auto px-5 pb-16 sm:px-8 ${wide ? "max-w-6xl" : "max-w-4xl"}`}>{children}</main>
-      <footer className="border-t border-white/10 bg-[#05040a]/90">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
-          <p>CF LLC · Remote, serving small businesses across the US</p>
-          <p><a href="/nwa" className="underline">Websites for Bentonville and NWA</a> · <a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

@@ -4,6 +4,11 @@ import BeforeAfter from '@/components/BeforeAfter'
 import MockupForm from '@/components/MockupForm'
 import QuoteQuiz from '@/components/QuoteQuiz'
 import { packages } from '@/data/packages'
+import SiteFooter from '@/components/SiteFooter'
+import type { Metadata } from 'next'
+import { pageSeo, SITE_DESCRIPTION } from '@/lib/seo'
+
+export const metadata: Metadata = pageSeo('/', 'CF LLC — Websites for small businesses, live in a week', SITE_DESCRIPTION)
 
 // Prices: approved price sheet (/workspace/ps.md, matches openclaw-revenue-plan.md).
 // Links: live house Stripe payment links (metadata rep=house, source=storefront),
@@ -157,13 +162,7 @@ export default function Home() {
 
         </div>
       </main>
-
-      <footer className="relative z-10 border-t border-white/10 bg-[#05040a]/90">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-white/75 sm:px-8">
-          <p>CF LLC · Remote, serving small businesses across the US</p>
-          <p><a href="/nwa" className="underline">Websites for Bentonville and NWA</a> · <a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a></p>
-        </div>
-      </footer>
+      <SiteFooter className="relative z-10" />
     </div>
   )
 }
