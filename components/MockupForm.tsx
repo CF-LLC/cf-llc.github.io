@@ -1,7 +1,7 @@
 'use client'
 
 import { FormEvent, useMemo, useState } from 'react'
-import { CONTACT_EMAIL, FORMSPREE_ENDPOINT } from '@/lib/form'
+import { CONTACT_EMAIL, submitInquiry } from '@/lib/form'
 
 function mailtoFor(biz: string, site: string, email: string) {
   const subject = `Free homepage mockup request: ${biz || 'your business'}`
@@ -41,19 +41,15 @@ export default function MockupForm() {
       return
     }
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
+      await submitInquiry({
+        email,
+        form: 'free-mockup',
+        subject: `Free homepage mockup request: ${business}`,
+        fields: {
           business,
           site: site || '(none yet)',
-          email,
-          form: 'free-mockup',
-          _subject: `Free homepage mockup request: ${business}`,
-          _replyto: email,
-        }),
+        },
       })
-      if (!response.ok) throw new Error('Form submission failed')
       setStatus('success')
       form.reset()
     } catch {

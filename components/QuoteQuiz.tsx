@@ -1,7 +1,7 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
-import { CONTACT_EMAIL, FORMSPREE_ENDPOINT } from '@/lib/form'
+import { CONTACT_EMAIL, submitInquiry } from '@/lib/form'
 import {
   BUSINESS_OPTIONS,
   CARE_OPTIONS,
@@ -109,14 +109,13 @@ export default function QuoteQuiz() {
     }
     try {
       const a = answers as QuoteAnswers
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
+      await submitInquiry({
+        email,
+        form: 'quote-quiz',
+        subject: `Quote request: ${rec.pkg.name} for ${business}`,
+        fields: {
           business,
-          email,
           notes: notes || '(none)',
-          form: 'quote-quiz',
           recommended: `${rec.pkg.name} (${rec.pkg.price} ${rec.pkg.priceNote})`,
           reason: rec.reason,
           business_type: optionLabel(BUSINESS_OPTIONS, a.business),
@@ -124,11 +123,8 @@ export default function QuoteQuiz() {
           timeline: optionLabel(TIMELINE_OPTIONS, a.timeline),
           ongoing_care: optionLabel(CARE_OPTIONS, a.care),
           sample_style: preset ? `${preset.familyLabel} (${preset.sample.name})` : undefined,
-          _subject: `Quote request: ${rec.pkg.name} for ${business}`,
-          _replyto: email,
-        }),
+        },
       })
-      if (!response.ok) throw new Error('Form submission failed')
       setStatus('success')
       form.reset()
     } catch {
