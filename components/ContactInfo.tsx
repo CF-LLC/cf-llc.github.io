@@ -3,7 +3,7 @@
 import { FormEvent, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Github, Instagram, Mail, Send, Twitter, Video } from 'lucide-react'
-import { FORMSPREE_ENDPOINT } from '@/lib/form'
+import { submitInquiry } from '@/lib/form'
 
 const contactInfo = [
   { icon: Mail, label: 'Email', url: 'mailto:cooperfeatherstonellc@gmail.com' },
@@ -50,18 +50,16 @@ export default function ContactInfo() {
       return
     }
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
+      await submitInquiry({
+        email: formData.email,
+        form: 'project-intake',
+        subject: `Project inquiry from ${formData.company || formData.name || 'Website inquiry'}`,
+        fields: {
           name: formData.name,
           company: formData.company,
-          email: formData.email,
           proposal: formData.proposal,
-          website: formData.website
-        })
+        },
       })
-      if (!response.ok) throw new Error('Formspree submission failed')
       setSubmitState('success')
       setFormData(initialForm)
     } catch {
