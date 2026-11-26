@@ -1,14 +1,18 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { CONTACT_EMAIL, submitInquiry } from '@/lib/form'
 
-function mailtoFor(biz: string, site: string, email: string) {
-  const subject = `Free homepage mockup request: ${biz || 'your business'}`
+export type Interest = 'mockup' | 'care-plan'
+export const CARE_PLAN_LABEL = 'Website Care Plan ($99/month)'
+
+function mailtoFor(biz: string, site: string, email: string, interest: Interest) {
+  const care = interest === 'care-plan'
+  const subject = care ? `Website Care Plan inquiry: ${biz || 'your business'}` : `Free homepage mockup request: ${biz || 'your business'}`
   const body = [
     'Hi Cooper,',
     '',
-    "I'd like a free homepage mockup.",
+    care ? "I'm interested in the Website Care Plan ($99/month)." : "I'd like a free homepage mockup.",
     '',
     `Business name: ${biz || '(not provided)'}`,
     `Current site: ${site || '(none yet)'}`,
@@ -19,10 +23,17 @@ function mailtoFor(biz: string, site: string, email: string) {
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
-export default function MockupForm() {
+export default function MockupForm({ defaultInterest = 'mockup' }: { defaultInterest?: Interest }) {
+  const [interest, setInterest] = useState<Interest>(defaultInterest)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [draft, setDraft] = useState({ business: '', site: '', email: '' })
-  const mailtoHref = useMemo(() => mailtoFor(draft.business, draft.site, draft.email), [draft])
+  const mailtoHref = useMemo(() => mailtoFor(draft.business, draft.site, draft.email, interest), [draft, interest])
+
+  // Links like /?interest=care-plan#mockup preselect the care plan.
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get('interest')
+    if (v === 'care-plan' || v === 'mockup') setInterest(v)
+  }, [])
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -34,6 +45,7 @@ export default function MockupForm() {
     const email = String(d.get('email') || '').trim()
     const honeypot = String(d.get('company_website') || '').trim()
     setDraft({ business, site, email })
+    const chosen = (String(d.get('interest') || interest) === 'care-plan' ? 'care-plan' : 'mockup') as Interest
     setStatus('submitting')
     if (honeypot) {
       setStatus('success')
@@ -43,9 +55,10 @@ export default function MockupForm() {
     try {
       await submitInquiry({
         email,
-        form: 'free-mockup',
-        subject: `Free homepage mockup request: ${business}`,
+        form: chosen === 'care-plan' ? 'care-plan' : 'free-mockup',
+        subject: chosen === 'care-plan' ? `Website Care Plan inquiry: ${business}` : `Free homepage mockup request: ${business}`,
         fields: {
+          interest: chosen === 'care-plan' ? CARE_PLAN_LABEL : 'Free homepage mockup',
           business,
           site: site || '(none yet)',
         },
@@ -62,11 +75,18 @@ export default function MockupForm() {
   return (
     <form onSubmit={onSubmit} className="relative grid gap-5" aria-describedby="form-note">
       <div>
+        <label htmlFor="interest" className="font-semibold">I&apos;m interested in</label>
+        <select id="interest" name="interest" value={interest} onChange={(e) => setInterest(e.target.value as Interest)} className={field}>
+          <option value="mockup">A free homepage mockup</option>
+          <option value="care-plan">{CARE_PLAN_LABEL}</option>
+        </select>
+      </div>
+      <div>
         <label htmlFor="business" className="font-semibold">Business name</label>
         <input id="business" name="business" required autoComplete="organization" className={field} onChange={(e) => setDraft((c) => ({ ...c, business: e.target.value }))} />
       </div>
       <div>
-        <label htmlFor="site" className="font-semibold">Current website <span className="font-normal text-white/70">(optional)</span></label>
+        <label htmlFor="site" className="font-semibold">Current website <span className="font-normal text-white/70">{interest === 'care-plan' ? '(the site you want cared for)' : '(optional)'}</span></label>
         <input id="site" name="site" type="url" inputMode="url" placeholder="https://" autoComplete="url" className={field} onChange={(e) => setDraft((c) => ({ ...c, site: e.target.value }))} />
       </div>
       <div>
@@ -78,11 +98,11 @@ export default function MockupForm() {
         <input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" />
       </div>
       <button type="submit" disabled={status === 'submitting'} className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#4aa8b8] focus:ring-offset-2 focus:ring-offset-[#070708] disabled:opacity-60">
-        {status === 'submitting' ? 'Sending…' : 'Request my free mockup'}
+        {status === 'submitting' ? 'Sending…' : interest === 'care-plan' ? 'Ask about the Care Plan' : 'Request my free mockup'}
       </button>
       <div id="form-note" className="text-sm text-white/75" aria-live="polite">
         {status === 'success' && (
-          <p role="status">Thanks — your mockup request was sent. I&apos;ll email you back at the address you entered.</p>
+          <p role="status">Thanks — your {interest === 'care-plan' ? 'care plan inquiry' : 'mockup request'} was sent. I&apos;ll email you back at the address you entered.</p>
         )}
         {status === 'error' && (
           <p role="alert">
