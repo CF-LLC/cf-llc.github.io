@@ -4,6 +4,7 @@ import BeforeAfter from '@/components/BeforeAfter'
 import MockupForm from '@/components/MockupForm'
 import QuoteQuiz from '@/components/QuoteQuiz'
 import { packages } from '@/data/packages'
+import { CARE_PLAN, careIncludes } from '@/data/carePlan'
 import SiteFooter from '@/components/SiteFooter'
 import type { Metadata } from 'next'
 import { pageSeo, SITE_DESCRIPTION } from '@/lib/seo'
@@ -25,6 +26,7 @@ const faqs = [
   { q: 'Can I make edits later?', a: 'Yes. Starter Site includes updates as part of the monthly fee: email me what you want changed. Pro Site includes 2 revision rounds during the build, and updates after launch are covered by the monthly fee.' },
   { q: 'How long does it take?', a: 'A Starter Site is typically live within about a week of approving your mockup, as long as I have your text and photos. Pro Sites take longer depending on pages and features; I will give you an estimate up front.' },
   { q: 'Do I need to be local?', a: 'No. Everything is done remotely by email, for small businesses anywhere in the US.' },
+  { q: 'What is the Website Care Plan?', a: 'It is $99/month: hosting and uptime monitoring, security and plugin updates, monthly backups, up to 1 hour of content edits, a monthly health report and fast email support. Cancel anytime. See the Care Plan page for the details.' },
   { q: 'Is the mockup really free?', a: 'Yes. No payment or commitment to get a homepage mockup.' },
 ]
 
@@ -39,6 +41,7 @@ export default function Home() {
           <nav aria-label="Main" className="flex gap-x-3 text-xs text-white/80 sm:gap-x-5 sm:text-sm">
             <a href="#stop-saas" className="hover:text-white">Projects</a>
             <a href="#packages" className="hover:text-white">Packages</a>
+            <a href="/website-care" className="whitespace-nowrap hover:text-white">Care Plan</a>
             <a href="#quote" className="whitespace-nowrap hover:text-white">Get a quote</a>
             <a href="/nwa" className="whitespace-nowrap hover:text-white">Bentonville &amp; NWA</a>
             <a href="/sample-homepages" className="whitespace-nowrap hover:text-white">Sample homepages</a>
@@ -96,6 +99,30 @@ export default function Home() {
               ))}
             </ul>
             <p className="mt-6 text-sm text-white/75">Checkout is handled securely by Stripe. Not sure which fits? <a href="#quote" className="underline">Get a quote in 60 seconds</a>, <a href="#mockup" className="underline">start with a free mockup</a>, or <a href="/sample-homepages" className="underline">see sample homepages</a>.</p>
+          </div>
+        </section>
+
+        <section id="care" aria-labelledby="care-title" className="scroll-mt-6 border-t border-white/10 bg-[#07060c]/80">
+          <div className="relative mx-auto max-w-6xl overflow-hidden px-5 py-20 sm:px-8">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+              <div>
+                <p className="kicker">Already have a website?</p>
+                <h2 id="care-title" className="display-title mt-4 text-4xl text-white sm:text-5xl">Website Care Plan<span className="block text-[#8fd3de]">{CARE_PLAN.price}/month</span></h2>
+                <p className="mt-4 leading-7 text-white/80">{CARE_PLAN.tagline} Monitoring, updates, backups, a little time for edits, and a monthly report, all handled for you.</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a href={CARE_PLAN.homeInquiryHref} className="rounded-md bg-[#eceae4] px-6 py-3 font-semibold text-[#070708] hover:bg-white">Get the Care Plan →</a>
+                  <a href="/website-care" className="rounded-md border border-white/30 px-6 py-3 font-semibold text-white hover:border-white">See everything included</a>
+                </div>
+                <p className="mt-3 text-sm text-white/70">No contract. Cancel anytime.</p>
+              </div>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {careIncludes.map((c) => (
+                  <li key={c.title} className="rounded-lg border border-white/15 bg-white/[0.03] p-4">
+                    <p className="font-semibold text-white">{c.title}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
 

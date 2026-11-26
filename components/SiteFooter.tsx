@@ -8,6 +8,8 @@ export default function SiteFooter({ className = '' }: { className?: string }) {
         <p>
           <a href="/nwa" className="underline">Websites for Bentonville and NWA</a>
           {' · '}
+          <a href="/website-care" className="underline">Website Care Plan</a>
+          {' · '}
           <a href="mailto:cooperfeatherstonellc@gmail.com" className="underline">cooperfeatherstonellc@gmail.com</a>
         </p>
         <nav aria-label="More from CF LLC" className="mt-4">
